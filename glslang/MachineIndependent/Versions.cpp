@@ -293,6 +293,7 @@ void TParseVersions::initializeExtensionBehavior()
     extensionBehavior[E_GL_NV_cooperative_matrix]                    = EBhDisable;
     extensionBehavior[E_GL_NV_shader_sm_builtins]                    = EBhDisable;
     extensionBehavior[E_GL_NV_integer_cooperative_matrix]            = EBhDisable;
+    extensionBehavior[E_GL_NV_bindless_texture]                      = EBhDisable;
 
     // AEP
     extensionBehavior[E_GL_ANDROID_extension_pack_es31a]             = EBhDisable;
@@ -529,6 +530,7 @@ void TParseVersions::getPreamble(std::string& preamble)
             "#define GL_NV_mesh_shader 1\n"
             "#define GL_NV_cooperative_matrix 1\n"
             "#define GL_NV_integer_cooperative_matrix 1\n"
+            "#define GL_NV_bindless_texture 1\n"
 
             "#define GL_EXT_shader_explicit_arithmetic_types 1\n"
             "#define GL_EXT_shader_explicit_arithmetic_types_int8 1\n"
@@ -1000,6 +1002,8 @@ void TParseVersions::updateExtensionBehavior(int line, const char* extension, co
         intermediate.updateNumericFeature(TNumericFeatures::gpu_shader_int16, on);
     else if (strcmp(extension, "GL_AMD_gpu_shader_half_float") == 0)
         intermediate.updateNumericFeature(TNumericFeatures::gpu_shader_half_float, on);
+    else if (strcmp(extension, "GL_ARB_gpu_shader_int64") == 0)
+        intermediate.updateNumericFeature(TNumericFeatures::shader_explicit_arithmetic_types_int64, on);
 }
 
 void TParseVersions::updateExtensionBehavior(const char* extension, TExtensionBehavior behavior)
@@ -1290,6 +1294,12 @@ void TParseVersions::fcoopmatCheck(const TSourceLoc& loc, const char* op, bool b
     }
 }
 
+// Checks for valid extensions that enables bindless textures.
+void TParseVersions::bindlessTextureCheck(const TSourceLoc& loc, const char* featureDesc)
+{
+    const char* const extensions[] = {E_GL_NV_bindless_texture};
+    requireExtensions(loc, sizeof(extensions)/sizeof(extensions[0]), extensions, featureDesc);
+}
 void TParseVersions::intcoopmatCheck(const TSourceLoc& loc, const char* op, bool builtIn)
 {
     if (!builtIn) {

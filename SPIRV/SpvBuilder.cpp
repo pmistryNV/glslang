@@ -72,6 +72,7 @@ Builder::Builder(unsigned int spvVersion, unsigned int magicNumber, SpvBuildLogg
     uniqueId(0),
     entryPointFunction(0),
     generatingOpCodeForSpecConst(false),
+    samplerImageAddressMode(0),
     logger(buildLogger)
 {
     clearAccessChain();
@@ -671,6 +672,9 @@ int Builder::getNumTypeConstituents(Id typeId) const
     case OpTypeInt:
     case OpTypeFloat:
     case OpTypePointer:
+    case OpTypeSampledImage:
+    case OpTypeImage:
+    case OpTypeSampler:
         return 1;
     case OpTypeVector:
     case OpTypeMatrix:
@@ -706,6 +710,9 @@ Id Builder::getScalarTypeId(Id typeId) const
     case OpTypeInt:
     case OpTypeFloat:
     case OpTypeStruct:
+    case OpTypeSampledImage:
+    case OpTypeImage:
+    case OpTypeSampler:
         return instr->getResultId();
     case OpTypeVector:
     case OpTypeMatrix:
@@ -2451,6 +2458,8 @@ Id Builder::createConstructor(Decoration precision, const std::vector<Id>& sourc
             accumulateVectorConstituents(sources[i]);
         else if (isMatrix(sources[i]))
             accumulateMatrixConstituents(sources[i]);
+        else if (isSampledImage(sources[i]) || isImage(sources[i]) || isSampler(sources[i]))
+            latchResult(sources[i]);
         else
             assert(0);
 
@@ -3030,6 +3039,13 @@ void Builder::dump(std::vector<unsigned int>& out) const
     memInst.addImmediateOperand(addressModel);
     memInst.addImmediateOperand(memoryModel);
     memInst.dump(out);
+
+    // Address mode for image/sampler types only 32/64 bit width are legal
+    if(samplerImageAddressMode == 32 || samplerImageAddressMode == 64) {
+        Instruction samplerImageAddresModeInst(0, 0, OpSamplerImageAddressingModeNV);
+        samplerImageAddresModeInst.addImmediateOperand(samplerImageAddressMode);
+        samplerImageAddresModeInst.dump(out);
+    }
 
     // Instructions saved up while building:
     dumpInstructions(out, entryPoints);

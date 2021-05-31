@@ -1268,8 +1268,16 @@ spv::StorageClass TGlslangToSpvTraverser::TranslateStorageClass(const glslang::T
             type.getQualifier().storage == glslang::EvqUniform) {
         if (type.isAtomic())
             return spv::StorageClassAtomicCounter;
-        if (type.containsOpaque())
+        if (type.containsOpaque()) {
+            // Allows samplers/images inside a UBO/Struct or as a temporary. In such case storage qualifier
+            // should not be UniformConstant and such samplers are handled later on.
+            const auto& sourceExtensions = glslangIntermediate->getRequestedExtensions();
+            if(!((sourceExtensions.find(glslang::E_GL_NV_bindless_texture) != sourceExtensions.end()) && 
+                type.containsSampler() &&
+                (type.getBasicType() == glslang::EbtBlock || type.getBasicType() == glslang::EbtStruct ||
+                   type.getQualifier().storage == glslang::EvqTemporary)))
             return spv::StorageClassUniformConstant;
+        }
     }
 
     if (type.getQualifier().isUniformOrBuffer() &&
@@ -2880,6 +2888,7 @@ bool TGlslangToSpvTraverser::visitAggregate(glslang::TVisit visit, glslang::TInt
     case glslang::EOpConstructTextureSampler:
     case glslang::EOpConstructReference:
     case glslang::EOpConstructCooperativeMatrix:
+    case glslang::EOpConstructSampler:
     {
         builder.setLine(node->getLoc().line, node->getLoc().getFilename());
         std::vector<spv::Id> arguments;
@@ -2901,6 +2910,11 @@ bool TGlslangToSpvTraverser::visitAggregate(glslang::TVisit visit, glslang::TInt
 
         if (node->getType().getQualifier().isNonUniform()) {
             builder.addDecoration(constructed, spv::DecorationNonUniformEXT);
+        }
+
+        if (node->getOp() == glslang::EOpConstructSampler) {
+            builder.addExtension(spv::E_SPV_NV_bindless_texture);
+            builder.addCapability(spv::CapabilityBindlessTextureNV);
         }
 
         builder.clearAccessChain();
@@ -5835,6 +5849,16 @@ spv::Id TGlslangToSpvTraverser::handleUserFunctionCall(const glslang::TIntermAgg
     const glslang::TIntermSequence& glslangArgs = node->getSequence();
     const glslang::TQualifierList& qualifiers = node->getQualifierList();
 
+    const auto isNodeBindlessTextureConstructor = [](TIntermNode* node) {
+            if (node->getAsOperator() && 
+                (node->getAsOperator()->getOp() == glslang::EOpConvUint64ToSampler ||
+                 node->getAsOperator()->getOp() == glslang::EOpConvUint64ToImage ||
+                 node->getAsOperator()->getOp() == glslang::EOpConvUint64ToPureSampler)) {
+                return true;
+            }
+            return false;
+    };
+
     //  See comments in makeFunctions() for details about the semantics for parameter passing.
     //
     // These imply we need a four step process:
@@ -5853,7 +5877,10 @@ spv::Id TGlslangToSpvTraverser::handleUserFunctionCall(const glslang::TIntermAgg
         builder.clearAccessChain();
         glslangArgs[a]->traverse(this);
         // keep outputs and pass-by-originals as l-values, evaluate others as r-values
-        if (originalParam(qualifiers[a], *argTypes[a], function->hasImplicitThis() && a == 0) ||
+        // bindless conversion constructors are defined as local variable and hence needs to be passed
+        // as r-value
+        if (!isNodeBindlessTextureConstructor(glslangArgs[a]) &&
+            originalParam(qualifiers[a], *argTypes[a], function->hasImplicitThis() && a == 0) ||
             writableParam(qualifiers[a])) {
             // save l-value
             lValues.push_back(builder.getAccessChain());
@@ -5872,7 +5899,19 @@ spv::Id TGlslangToSpvTraverser::handleUserFunctionCall(const glslang::TIntermAgg
     std::vector<spv::Id> spvArgs;
     for (int a = 0; a < (int)glslangArgs.size(); ++a) {
         spv::Id arg;
-        if (originalParam(qualifiers[a], *argTypes[a], function->hasImplicitThis() && a == 0)) {
+        // For bindless conversion constructor, create a temporary variable
+        // using the typeID of TypeSampledImage to reflect the data type correctly.
+        if (isNodeBindlessTextureConstructor(glslangArgs[a])) {
+            const glslang::TType& paramType = glslangArgs[a]->getAsTyped()->getType();
+            spv::Id typeId = convertGlslangToSpvType(paramType);
+            spv::Id argCopy = builder.createVariable(function->getParamPrecision(a), 
+                                    spv::StorageClassFunction, typeId, "arg");
+            builder.clearAccessChain();
+            builder.setAccessChainLValue(argCopy);
+            multiTypeStore(*argTypes[a], rValues[rValueCount]);
+            arg = argCopy;
+            ++rValueCount;
+        } else if (originalParam(qualifiers[a], *argTypes[a], function->hasImplicitThis() && a == 0)) {
             builder.setAccessChain(lValues[lValueCount]);
             arg = builder.accessChainGetLValue();
             ++lValueCount;
@@ -7076,7 +7115,42 @@ spv::Id TGlslangToSpvTraverser::createConversion(glslang::TOperator op, OpDecora
     case glslang::EOpConvInt64ToInt:
         convOp = spv::OpSConvert;
         break;
-
+    case glslang::EOpConvSamplerToUint64:
+        builder.addExtension(spv::E_SPV_NV_bindless_texture);
+        builder.addCapability(spv::CapabilityBindlessTextureNV);
+        builder.setSamplerImageAddressMode(64);
+        convOp = spv::OpConvertSampledImageToUNV;
+        break;
+    case glslang::EOpConvPureSamplerToUint64:
+        builder.addExtension(spv::E_SPV_NV_bindless_texture);
+        builder.addCapability(spv::CapabilityBindlessTextureNV);
+        builder.setSamplerImageAddressMode(64);
+        convOp = spv::OpConvertSamplerToUNV;
+        break;
+    case glslang::EOpConvImageToUint64:
+        builder.addExtension(spv::E_SPV_NV_bindless_texture);
+        builder.addCapability(spv::CapabilityBindlessTextureNV);
+        builder.setSamplerImageAddressMode(64);
+        convOp = spv::OpConvertImageToUNV;
+        break;
+    case glslang::EOpConvUint64ToSampler:
+        builder.addExtension(spv::E_SPV_NV_bindless_texture);
+        builder.addCapability(spv::CapabilityBindlessTextureNV);
+        builder.setSamplerImageAddressMode(64);
+        convOp = spv::OpConvertUToSampledImageNV;
+        break;
+    case glslang::EOpConvUint64ToPureSampler:
+        builder.addExtension(spv::E_SPV_NV_bindless_texture);
+        builder.addCapability(spv::CapabilityBindlessTextureNV);
+        builder.setSamplerImageAddressMode(64);
+        convOp = spv::OpConvertUToSamplerNV;
+        break;
+    case glslang::EOpConvUint64ToImage:
+        builder.addExtension(spv::E_SPV_NV_bindless_texture);
+        builder.addCapability(spv::CapabilityBindlessTextureNV);
+        builder.setSamplerImageAddressMode(64);
+        convOp = spv::OpConvertUToImageNV;
+        break;
     case glslang::EOpConvUint8ToUint16:
     case glslang::EOpConvUint8ToUint:
     case glslang::EOpConvUint8ToUint64:
@@ -8758,6 +8832,27 @@ spv::Id TGlslangToSpvTraverser::getSymbolId(const glslang::TIntermSymbol* symbol
         }
         if (symbol->getQualifier().hasXfbOffset())
             builder.addDecoration(id, spv::DecorationOffset, symbol->getQualifier().layoutXfbOffset);
+    }
+
+    // Check for sampler variables and set capabilities/decorations accordingly
+    const auto& sourceExtensions = glslangIntermediate->getRequestedExtensions();
+    if ((sourceExtensions.find(glslang::E_GL_NV_bindless_texture) != sourceExtensions.end()) &&
+        symbol->getType().containsSampler()) {
+        builder.addExtension(spv::E_SPV_NV_bindless_texture);
+        builder.addCapability(spv::CapabilityBindlessTextureNV);
+        // NV_bindless_texture implies sampler/image handles are 64 bit wide
+        builder.setSamplerImageAddressMode(64); 
+    }
+
+    // NV_bindless_texture: Always set the bindless decoration, since NV_bindless_texture doesn't have
+    // explicit qualifiers to differentiate between bound and bindless samplers
+    if (symbol->getType().getBasicType() == glslang::EbtSampler && 
+        symbol->getQualifier().storage == glslang::EvqUniform &&
+        sourceExtensions.find(glslang::E_GL_NV_bindless_texture) != sourceExtensions.end()) {
+        if(symbol->getType().isImage())
+            builder.addDecoration(id, spv::DecorationBindlessImageNV);
+        else
+            builder.addDecoration(id, spv::DecorationBindlessSamplerNV);
     }
 
     // add built-in variable decoration

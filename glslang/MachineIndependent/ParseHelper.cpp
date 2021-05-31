@@ -3200,7 +3200,7 @@ bool TParseContext::constructorError(const TSourceLoc& loc, TIntermNode* node, T
     bool constructingMatrix = false;
     switch (op) {
     case EOpConstructTextureSampler:
-        return constructorTextureSamplerError(loc, function);
+        return constructorTextureSamplerError(loc, function, type);
     case EOpConstructMat2x2:
     case EOpConstructMat2x3:
     case EOpConstructMat2x4:
@@ -3496,7 +3496,8 @@ bool TParseContext::constructorError(const TSourceLoc& loc, TIntermNode* node, T
         error(loc, "constructor argument does not have a type", "constructor", "");
         return true;
     }
-    if (op != EOpConstructStruct && op != EOpConstructNonuniform && typed->getBasicType() == EbtSampler) {
+    if (op != EOpConstructStruct && op != EOpConstructNonuniform &&
+        op != EOpConstructUint64 && typed->getBasicType() == EbtSampler) {
         error(loc, "cannot convert a sampler", "constructor", "");
         return true;
     }
@@ -3514,13 +3515,20 @@ bool TParseContext::constructorError(const TSourceLoc& loc, TIntermNode* node, T
 
 // Verify all the correct semantics for constructing a combined texture/sampler.
 // Return true if the semantics are incorrect.
-bool TParseContext::constructorTextureSamplerError(const TSourceLoc& loc, const TFunction& function)
+bool TParseContext::constructorTextureSamplerError(const TSourceLoc& loc, const TFunction& function, TType& type)
 {
     TString constructorName = function.getType().getBasicTypeString();  // TODO: performance: should not be making copy; interface needs to change
     const char* token = constructorName.c_str();
 
+    // GL_NV_bindless_texture: If enabled we can do uint64_t <-> sampler/image
+    if (function.getParamCount() == 1) {
+        if (!extensionTurnedOn(E_GL_NV_bindless_texture)) {
+            error(loc, "sampler-constructor with one argument, requires extension GL_NV_bindless_texture", token, "");
+            return true;
+        }
+    }
     // exactly two arguments needed
-    if (function.getParamCount() != 2) {
+    else if (function.getParamCount() != 2) {
         error(loc, "sampler-constructor requires two arguments", token, "");
         return true;
     }
@@ -3531,37 +3539,54 @@ bool TParseContext::constructorTextureSamplerError(const TSourceLoc& loc, const 
         error(loc, "sampler-constructor cannot make an array of samplers", token, "");
         return true;
     }
+    if (function.getParamCount() == 1) {
+        if (function[0].type->getBasicType() == EbtUint64) {
+            bindlessTextureCheck(loc, "conversion from sampler to uint64");
+            int64Check(loc, "conversion from sampler to uint64");
+        } 
+        else if (function[0].type->getBasicType() == EbtSampler && 
+            function[0].type->isImage() == function.getType().isImage() && 
+            function[0].type->getSampler() == function.getType().getSampler()) {
+            // Identity constructor
+            bindlessTextureCheck(loc, "identity sampler constructor");
+        } else {
+            error(loc, "sampler-constructor with single arugment must be a sampler/image type", token, "");
+        }
+        //TSampler texture = function.getType().getSampler();
+        //texture.setBindless(true);
+        type.getSampler().setBindless(true);
+    } else {
+        // first argument
+        //  * the constructor's first argument must be a texture type
+        //  * the dimensionality (1D, 2D, 3D, Cube, Rect, Buffer, MS, and Array)
+        //    of the texture type must match that of the constructed sampler type
+        //    (that is, the suffixes of the type of the first argument and the
+        //    type of the constructor will be spelled the same way)
+        if (function[0].type->getBasicType() != EbtSampler ||
+            ! function[0].type->getSampler().isTexture() ||
+            function[0].type->isArray()) {
+            error(loc, "sampler-constructor first argument must be a scalar *texture* type", token, "");
+            return true;
+        }
+        // simulate the first argument's impact on the result type, so it can be compared with the encapsulated operator!=()
+        TSampler texture = function.getType().getSampler();
+        texture.setCombined(false);
+        texture.shadow = false;
+        if (texture != function[0].type->getSampler()) {
+            error(loc, "sampler-constructor first argument must be a *texture* type"
+                       " matching the dimensionality and sampled type of the constructor", token, "");
+            return true;
+        }
 
-    // first argument
-    //  * the constructor's first argument must be a texture type
-    //  * the dimensionality (1D, 2D, 3D, Cube, Rect, Buffer, MS, and Array)
-    //    of the texture type must match that of the constructed sampler type
-    //    (that is, the suffixes of the type of the first argument and the
-    //    type of the constructor will be spelled the same way)
-    if (function[0].type->getBasicType() != EbtSampler ||
-        ! function[0].type->getSampler().isTexture() ||
-        function[0].type->isArray()) {
-        error(loc, "sampler-constructor first argument must be a scalar *texture* type", token, "");
-        return true;
-    }
-    // simulate the first argument's impact on the result type, so it can be compared with the encapsulated operator!=()
-    TSampler texture = function.getType().getSampler();
-    texture.setCombined(false);
-    texture.shadow = false;
-    if (texture != function[0].type->getSampler()) {
-        error(loc, "sampler-constructor first argument must be a *texture* type"
-                   " matching the dimensionality and sampled type of the constructor", token, "");
-        return true;
-    }
-
-    // second argument
-    //   * the constructor's second argument must be a scalar of type
-    //     *sampler* or *samplerShadow*
-    if (  function[1].type->getBasicType() != EbtSampler ||
-        ! function[1].type->getSampler().isPureSampler() ||
-          function[1].type->isArray()) {
-        error(loc, "sampler-constructor second argument must be a scalar sampler or samplerShadow", token, "");
-        return true;
+        // second argument
+        //   * the constructor's second argument must be a scalar of type
+        //     *sampler* or *samplerShadow*
+        if (  function[1].type->getBasicType() != EbtSampler ||
+            ! function[1].type->getSampler().isPureSampler() ||
+              function[1].type->isArray()) {
+            error(loc, "sampler-constructor second argument must be a scalar sampler or samplerShadow", token, "");
+            return true;
+        }
     }
 
     return false;
@@ -3595,7 +3620,7 @@ void TParseContext::boolCheck(const TSourceLoc& loc, const TPublicType& pType)
         error(loc, "boolean expression expected", "", "");
 }
 
-void TParseContext::samplerCheck(const TSourceLoc& loc, const TType& type, const TString& identifier, TIntermTyped* /*initializer*/)
+void TParseContext::samplerCheck(const TSourceLoc& loc, const TType& type, const TString& identifier, TIntermTyped* initializer)
 {
     // Check that the appropriate extension is enabled if external sampler is used.
     // There are two extensions. The correct one must be used based on GLSL version.
@@ -3613,13 +3638,39 @@ void TParseContext::samplerCheck(const TSourceLoc& loc, const TType& type, const
     if (type.getQualifier().storage == EvqUniform)
         return;
 
-    if (type.getBasicType() == EbtStruct && containsFieldWithBasicType(type, EbtSampler))
-        error(loc, "non-uniform struct contains a sampler or image:", type.getBasicTypeString().c_str(), identifier.c_str());
-    else if (type.getBasicType() == EbtSampler && type.getQualifier().storage != EvqUniform) {
-        // non-uniform sampler
-        // not yet:  okay if it has an initializer
-        // if (! initializer)
-        error(loc, "sampler/image types can only be used in uniform variables or function parameters:", type.getBasicTypeString().c_str(), identifier.c_str());
+    if (type.getBasicType() == EbtStruct && containsFieldWithBasicType(type, EbtSampler)) {
+            bindlessTextureCheck(loc,
+                TString(type.getBasicTypeString() + " " + identifier.c_str() + " contains a sampler/image type")
+                    .c_str());
+    } else if (type.getBasicType() == EbtSampler) {
+        if (type.getQualifier().storage == EvqVaryingIn) {
+            bindlessTextureCheck(loc, TString(identifier + " as input variable").c_str());
+            if (type.getQualifier().flat == false && language == EShLangFragment) {
+                error(loc, "in sampler/image types must be defined as flat:", type.getBasicTypeString().c_str(),
+                      identifier.c_str());
+            }
+        } else if (type.getQualifier().storage == EvqTemporary) {
+            bindlessTextureCheck(loc, TString(identifier + " as temporary variable").c_str());
+            if (type.getQualifier().storage == EvqTemporary && type.isImage() && initializer &&
+                type.getQualifier().layoutFormat != initializer->getType().getQualifier().layoutFormat) {
+                error(loc, "temporary image layout qualifier must match the initilalizer",
+                      type.getBasicTypeString().c_str(),
+                      identifier.c_str());
+            }
+        }
+        else if (type.getQualifier().storage == EvqVaryingOut) {
+            bindlessTextureCheck(loc, TString(identifier + " as out variable").c_str());
+            if(language == EShLangFragment) {
+                error(loc, "sampler/image types cannot be used as out variable in fragment shader:",
+                      type.getBasicTypeString().c_str(), identifier.c_str());
+            }
+        } else if (type.getQualifier().storage != EvqUniform) {
+            // non-uniform sampler
+            // not yet:  okay if it has an initializer
+            // if (! initializer)
+            error(loc, "sampler/image types can only be used in uniform variables or function parameters:",
+                  type.getBasicTypeString().c_str(), identifier.c_str());
+        }
     }
 }
 
@@ -3680,6 +3731,26 @@ void TParseContext::memberQualifierCheck(glslang::TPublicType& publicType)
         error(publicType.loc, "not allowed on block or structure members", "nonuniformEXT", "");
         publicType.qualifier.nonUniform = false;
     }
+}
+
+//
+// Checks if the qualifier applied is valid on a temporary image variable
+//
+void TParseContext::bindlessSamplerQualifierCheck(const TSourceLoc& loc, TQualifier& qualifier, TIntermTyped* node)
+{
+    if (node->getBasicType() != EbtSampler || !node->getType().isImage()) {
+        error(loc, "Layout qualifier not allowed on anything other then images", "nonuniformEXT", "");
+    }
+    // Only format layout qualifier is allowed on temporaries as part of GL_ARB_bindless_texture
+    if (qualifier.storage != EvqTemporary || !qualifier.hasOnlyFormat()) {
+        error(loc, "not allowed on block or structure members", "nonuniformEXT", "");
+    }
+
+    if(node->getAsUnaryNode())
+        node->getAsUnaryNode()->updateFormatQualifier(qualifier.layoutFormat);
+    else if (node->getAsAggregate())
+        // This is the case for sampler/image identity constructor
+        node->getAsAggregate()->updateFormatQualifier(qualifier.layoutFormat);
 }
 
 //
@@ -4122,7 +4193,9 @@ void TParseContext::precisionQualifierCheck(const TSourceLoc& loc, TBasicType ba
 
 void TParseContext::parameterTypeCheck(const TSourceLoc& loc, TStorageQualifier qualifier, const TType& type)
 {
-    if ((qualifier == EvqOut || qualifier == EvqInOut) && type.isOpaque())
+    if ((qualifier == EvqOut || qualifier == EvqInOut) && type.getBasicType() == EbtSampler)
+        bindlessTextureCheck(loc, "samplers as out or inout parameter");
+    else if ((qualifier == EvqOut || qualifier == EvqInOut) && type.isOpaque())
         error(loc, "samplers and atomic_uints cannot be output parameters", type.getBasicTypeString().c_str(), "");
     if (!parsingBuiltins && type.contains16BitFloat())
         requireFloat16Arithmetic(loc, type.getBasicTypeString().c_str(), "float16 types can only be in uniform block or buffer storage");
@@ -4984,8 +5057,13 @@ void TParseContext::paramCheckFix(const TSourceLoc& loc, const TQualifier& quali
     if (qualifier.isAuxiliary() ||
         qualifier.isInterpolation())
         error(loc, "cannot use auxiliary or interpolation qualifiers on a function parameter", "", "");
-    if (qualifier.hasLayout())
-        error(loc, "cannot use layout qualifiers on a function parameter", "", "");
+    if (qualifier.hasLayout()) {
+        if (type.isImage() && qualifier.hasOnlyFormat()) {
+            bindlessTextureCheck(loc, "format layout qualifier on a image function parameter");
+            type.getQualifier().layoutFormat = qualifier.layoutFormat;
+        } else
+            error(loc, "cannot use layout qualifiers on a function parameter", "", "");
+    }
     if (qualifier.invariant)
         error(loc, "cannot use invariant qualifier on a function parameter", "", "");
     if (qualifier.isNoContraction()) {
@@ -5036,8 +5114,12 @@ void TParseContext::arrayObjectCheck(const TSourceLoc& loc, const TType& type, c
 
 void TParseContext::opaqueCheck(const TSourceLoc& loc, const TType& type, const char* op)
 {
-    if (containsFieldWithBasicType(type, EbtSampler))
-        error(loc, "can't use with samplers or structs containing samplers", op, "");
+    if (containsFieldWithBasicType(type, EbtSampler)) {
+        if (!TString(op).compare("="))
+            bindlessTextureCheck(loc, "samplers in assignment");
+        else
+            error(loc, "can't use with samplers or structs containing samplers", op, "");
+    }
 }
 
 void TParseContext::referenceCheck(const TSourceLoc& loc, const TType& type, const char* op)
@@ -5104,8 +5186,16 @@ void TParseContext::structTypeCheck(const TSourceLoc& /*loc*/, TPublicType& publ
         if (memberQualifier.isMemory())
             error(memberLoc, "cannot use memory qualifiers on structure members", typeList[member].type->getFieldName().c_str(), "");
         if (memberQualifier.hasLayout()) {
-            error(memberLoc, "cannot use layout qualifiers on structure members", typeList[member].type->getFieldName().c_str(), "");
-            memberQualifier.clearLayout();
+            if ((typeList[member].type->getBasicType() == EbtSampler) && typeList[member].type->isImage() &&
+                memberQualifier.hasOnlyFormat()) {
+                bindlessTextureCheck(memberLoc,
+                                    TString("format layout qualifier with image type structure member " +
+                                    typeList[member].type->getFieldName()).c_str());
+            } else {
+                error(memberLoc, "cannot use layout qualifiers on structure members",
+                      typeList[member].type->getFieldName().c_str(), "");
+                memberQualifier.clearLayout();
+            }
         }
         if (memberQualifier.invariant)
             error(memberLoc, "cannot use invariant qualifier on structure members", typeList[member].type->getFieldName().c_str(), "");
@@ -6037,6 +6127,8 @@ void TParseContext::mergeObjectLayoutQualifiers(TQualifier& dst, const TQualifie
             dst.layoutShaderRecord = true;
         if (src.pervertexNV)
             dst.pervertexNV = true;
+        if (src.hasFormat())
+            dst.layoutFormat = src.layoutFormat;
 #endif
     }
 }
@@ -6136,7 +6228,7 @@ void TParseContext::layoutMemberLocationArrayCheck(const TSourceLoc& loc, bool m
 }
 
 // Do layout error checking with respect to a type.
-void TParseContext::layoutTypeCheck(const TSourceLoc& loc, const TType& type)
+void TParseContext::layoutTypeCheck(const TSourceLoc& loc, const TType& type, bool blockMember)
 {
 #ifndef GLSLANG_WEB
     if (extensionTurnedOn(E_GL_EXT_spirv_intrinsics))
@@ -6287,7 +6379,8 @@ void TParseContext::layoutTypeCheck(const TSourceLoc& loc, const TType& type)
                        !qualifier.hasAttachment() &&
                        !qualifier.hasBufferReference())
                     error(loc, "uniform/buffer blocks require layout(binding=X)", "binding", "");
-                else if (spvVersion.vulkan > 0 && type.getBasicType() == EbtSampler)
+                else if (spvVersion.vulkan > 0 && type.getBasicType() == EbtSampler && !blockMember &&
+                         !extensionTurnedOn(E_GL_NV_bindless_texture))
                     error(loc, "sampler/texture/image requires layout(binding=X)", "binding", "");
             }
         }
@@ -7622,6 +7715,39 @@ TIntermTyped* TParseContext::addConstructor(const TSourceLoc& loc, TIntermNode* 
     // Combined texture-sampler constructors are completely semantic checked
     // in constructorTextureSamplerError()
     if (op == EOpConstructTextureSampler) {
+
+        if (!aggrNode || aggrNode->getSequence().size() == 1) {
+            // GL_NV_bindless_texture: Implementaion of constructor for uint64 => sampler/image
+            // and the identity constructor
+            if (!extensionTurnedOn(E_GL_NV_bindless_texture))
+                return nullptr;
+
+            if (!node->getAsTyped()) {
+                error(loc, "unknown left hand data type", "", "");
+            }
+            const TType* lvalType = &node->getAsTyped()->getType();
+            TIntermTyped* newNode = nullptr;
+            if (lvalType->getBasicType() == EbtUint64 && lvalType->getVectorSize() == 1) {
+                if (type.isImage()) {
+                    newNode =
+                        intermediate.addBuiltInFunctionCall(node->getLoc(), EOpConvUint64ToImage, true, node, type);
+                } else if (type.getSampler().isPureSampler()) {
+                    newNode =
+                        intermediate.addBuiltInFunctionCall(node->getLoc(), EOpConvUint64ToPureSampler, true, node, type);
+                } else {
+                    newNode =
+                        intermediate.addBuiltInFunctionCall(node->getLoc(), EOpConvUint64ToSampler, true, node, type);
+                }
+            } else if (lvalType && lvalType->getBasicType() == EbtSampler) {
+                // Identity Constructor
+                newNode = intermediate.setAggregateOperator(node, EOpConstructSampler, type, loc);
+            }
+            else {
+                error(loc, "Unable to find suitable costructor ", lvalType->getCompleteString().c_str(), "");
+            }
+            return newNode;
+        }
+
         if (aggrNode->getSequence()[1]->getAsTyped()->getType().getSampler().shadow) {
             // Transfer depth into the texture (SPIR-V image) type, as a hint
             // for tools to know this texture/image is a depth image.
@@ -7930,6 +8056,20 @@ TIntermTyped* TParseContext::constructBuiltIn(const TType& type, TOperator op, T
             TIntermTyped* newNode = intermediate.addBuiltInFunctionCall(node->getLoc(), EOpConvPtrToUint64, true, node, type);
             return newNode;
         }
+        if (node->getType().getBasicType() == EbtSampler) {
+            TIntermTyped* newNode = NULL;
+            if (node->getType().isImage()) {
+                bindlessTextureCheck(loc, "image type conversion to uint64");
+                newNode = intermediate.addBuiltInFunctionCall(node->getLoc(), EOpConvImageToUint64, true, node, type);
+            } else if (node->getType().getSampler().isPureSampler()) {
+                bindlessTextureCheck(loc, "pure sampler type conversion to uint64");
+                newNode = intermediate.addBuiltInFunctionCall(node->getLoc(), EOpConvPureSamplerToUint64, true, node, type);
+            } else {
+                bindlessTextureCheck(loc, "sampler type conversion to uint64");
+                newNode = intermediate.addBuiltInFunctionCall(node->getLoc(), EOpConvSamplerToUint64, true, node, type);
+            }
+            return newNode;
+        }
         // fall through
     case EOpConstructU64Vec2:
     case EOpConstructU64Vec3:
@@ -8170,8 +8310,9 @@ void TParseContext::declareBlock(const TSourceLoc& loc, TTypeList& typeList, con
                 profileRequires(memberLoc, EEsProfile, 300, E_GL_ARB_enhanced_layouts, "\"offset\" on block member");
             }
         }
-
-        if (memberType.containsOpaque())
+        if (memberType.containsSampler())
+            bindlessTextureCheck(memberLoc, "sampler/image in an interface block");
+        else if (memberType.containsOpaque())
             error(memberLoc, "member of block cannot be or contain a sampler, image, or atomic_uint type", typeList[member].type->getFieldName().c_str(), "");
 
         if (memberType.containsCoopMat())
@@ -8310,7 +8451,7 @@ void TParseContext::declareBlock(const TSourceLoc& loc, TTypeList& typeList, con
     fixBlockUniformLayoutMatrix(currentBlockQualifier, &typeList, nullptr);
     fixBlockUniformLayoutPacking(currentBlockQualifier, &typeList, nullptr);
     for (unsigned int member = 0; member < typeList.size(); ++member)
-        layoutTypeCheck(typeList[member].loc, *typeList[member].type);
+        layoutTypeCheck(typeList[member].loc, *typeList[member].type, true);
 
 #ifndef GLSLANG_WEB
     if (memberWithPerViewQualifier) {

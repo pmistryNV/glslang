@@ -289,6 +289,16 @@ enum TOperator {
     // uvec2 -> accelerationStructureEXT
     EOpConvUvec2ToAccStruct,
 
+    // uint64 -> sampler/image 
+    EOpConvUint64ToImage,
+    EOpConvUint64ToSampler,
+    EOpConvUint64ToPureSampler,
+
+    // sampler/image -> uint64
+    EOpConvSamplerToUint64,
+    EOpConvImageToUint64,
+    EOpConvPureSamplerToUint64,
+
     //
     // binary operations
     //
@@ -765,6 +775,7 @@ enum TOperator {
     EOpConstructReference,
     EOpConstructCooperativeMatrix,
     EOpConstructAccStruct,
+    EOpConstructSampler,
     EOpConstructGuardEnd,
 
     //
@@ -1624,6 +1635,7 @@ public:
     void setSpirvInstruction(const TSpirvInstruction& inst) { spirvInst = inst; }
     const TSpirvInstruction& getSpirvInstruction() const { return spirvInst; }
 #endif
+    virtual void updateFormatQualifier(TLayoutFormat format);
 protected:
     TIntermTyped* operand;
 #ifndef GLSLANG_WEB
@@ -1664,6 +1676,7 @@ public:
     void setSpirvInstruction(const TSpirvInstruction& inst) { spirvInst = inst; }
     const TSpirvInstruction& getSpirvInstruction() const { return spirvInst; }
 #endif
+    void updateFormatQualifier(TLayoutFormat format);
 protected:
     TIntermAggregate(const TIntermAggregate&); // disallow copy constructor
     TIntermAggregate& operator=(const TIntermAggregate&); // disallow assignment operator

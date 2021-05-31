@@ -312,6 +312,11 @@ const char* DecorationString(int decoration)
     case DecorationHlslSemanticGOOGLE:      return "DecorationHlslSemanticGOOGLE";
     case DecorationRestrictPointerEXT:      return "DecorationRestrictPointerEXT";
     case DecorationAliasedPointerEXT:       return "DecorationAliasedPointerEXT";
+
+    case DecorationBindlessImageNV:         return "BindlessmageNV";
+    case DecorationBindlessSamplerNV:       return "BindlessSamplerNV";
+    case DecorationBoundSamplerNV:          return "BoundSamplerNV";
+    case DecorationBoundImageNV:            return "BoundImageNV";
     }
 }
 
@@ -963,6 +968,7 @@ const char* CapabilityString(int info)
     case CapabilityFragmentShadingRateKHR:                  return "FragmentShadingRateKHR";
 
     case CapabilityDemoteToHelperInvocationEXT:             return "DemoteToHelperInvocationEXT";
+    case CapabilityBindlessTextureNV:                       return "CapabilityBindlessTextureNV";
     case CapabilityShaderClockKHR:                          return "ShaderClockKHR";
     case CapabilityInt64ImageEXT:                           return "Int64ImageEXT";
 
@@ -1430,6 +1436,15 @@ const char* OpcodeString(int op)
 
     case OpBeginInvocationInterlockEXT:     return "OpBeginInvocationInterlockEXT";
     case OpEndInvocationInterlockEXT:       return "OpEndInvocationInterlockEXT";
+
+    // SPV_NV_bindless_texture
+    case OpConvertUToImageNV:               return "OpConvertUToImageNV";
+    case OpConvertUToSamplerNV:             return "OpConvertUToSamplerNV";
+    case OpConvertImageToUNV:               return "OpConvertImageToUNV";
+    case OpConvertSamplerToUNV:             return "OpConvertSamplerToUNV";
+    case OpConvertUToSampledImageNV:        return "OpConvertUToSampledImageNV";
+    case OpConvertSampledImageToUNV:        return "OpConvertSampledImageToUNV";
+    case OpSamplerImageAddressingModeNV:    return "OpSamplerImageAddressingModeNV";
 
     default:
         return "Bad";
@@ -2997,6 +3012,21 @@ void Parameterize()
     InstructionDesc[OpDemoteToHelperInvocationEXT].setResultAndType(false, false);
 
     InstructionDesc[OpReadClockKHR].operands.push(OperandScope, "'Scope'");
+    
+    InstructionDesc[OpConvertUToImageNV].operands.push(OperandId, "Image Handle");
+    InstructionDesc[OpConvertUToImageNV].setResultAndType(true, true);
+    InstructionDesc[OpConvertUToSamplerNV].operands.push(OperandId, "Sampler Handle");
+    InstructionDesc[OpConvertUToSamplerNV].setResultAndType(true, true);
+    InstructionDesc[OpConvertImageToUNV].operands.push(OperandId, "Image");
+    InstructionDesc[OpConvertImageToUNV].setResultAndType(true, true);
+    InstructionDesc[OpConvertSamplerToUNV].operands.push(OperandId, "Sampler");
+    InstructionDesc[OpConvertSamplerToUNV].setResultAndType(true, true);
+    InstructionDesc[OpConvertUToSampledImageNV].operands.push(OperandId, "Sampled Image handle");
+    InstructionDesc[OpConvertUToSampledImageNV].setResultAndType(true, true);
+    InstructionDesc[OpConvertSampledImageToUNV].operands.push(OperandId, "Sampled Image");
+    InstructionDesc[OpConvertSampledImageToUNV].setResultAndType(true, true);
+    InstructionDesc[OpSamplerImageAddressingModeNV].operands.push(OperandLiteralNumber, "bit width");
+    InstructionDesc[OpSamplerImageAddressingModeNV].setResultAndType(false, false);
 }
 
 }; // end spv namespace

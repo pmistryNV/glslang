@@ -156,7 +156,8 @@ bool TParseContextBase::lValueErrorCheck(const TSourceLoc& loc, const char* op, 
         //
         switch (node->getBasicType()) {
         case EbtSampler:
-            message = "can't modify a sampler";
+            if(!extensionTurnedOn(E_GL_NV_bindless_texture))
+                message = "can't modify a sampler";
             break;
         case EbtVoid:
             message = "can't modify void";

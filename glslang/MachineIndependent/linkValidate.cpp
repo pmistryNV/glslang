@@ -1835,6 +1835,9 @@ int TIntermediate::getBaseAlignmentScalar(const TType& type, int& size)
     case EbtInt16:
     case EbtUint16:  size = 2; return 2;
     case EbtReference: size = 8; return 8;
+    case EbtSampler: 
+        if(type.getSampler().isBindless())
+            size = 8; return 8;
     default:         size = 4; return 4;
     }
 }

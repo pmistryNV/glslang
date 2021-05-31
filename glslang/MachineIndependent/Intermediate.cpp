@@ -288,6 +288,17 @@ TIntermTyped* TIntermediate::addAssign(TOperator op, TIntermTyped* left, TInterm
     if (left->getType().getBasicType() == EbtBlock || right->getType().getBasicType() == EbtBlock)
         return nullptr;
 
+    // GL_NV_bindless_texture: Check for assignment with image variables
+    if (left->getType().getBasicType() == EbtSampler && right->getType().getBasicType() == EbtSampler) {
+        if(!(left->getType().getSampler() == right->getType().getSampler())) {
+            return nullptr;
+        }
+        if (left->getType().isImage() && right->getType().isImage() && 
+            left->getType().getQualifier().layoutFormat != right->getType().getQualifier().layoutFormat) {
+            return nullptr;
+        }
+    }
+
     // Convert "reference += int" to "reference = reference + int". We need this because the
     // "reference + int" calculation involves a cast back to the original type, which makes it
     // not an lvalue.
@@ -556,6 +567,25 @@ bool TIntermediate::isConversionAllowed(TOperator op, TIntermTyped* node) const
         if (node->getBasicType() == EbtSampler && op == EOpAssign &&
             node->getAsOperator() != nullptr && node->getAsOperator()->getOp() == EOpConstructTextureSampler)
             break;
+
+        // GL_NV_bindless_texture: Check for legality of various conversion ops
+        if (node->getBasicType() == EbtSampler ) {
+            // Check if this is a constructor operation
+            if (op == EOpAssign && node->getAsOperator() != nullptr) {
+                if (node->getAsOperator()->getOp() == EOpConstructSampler)
+                    break;
+                else if ((node->getAsOperator()->getOp() == EOpConvUint64ToImage ||
+                          node->getAsOperator()->getOp() == EOpConvUint64ToSampler ||
+                          node->getAsOperator()->getOp() == EOpConvUint64ToPureSampler) &&
+                          node->getType().getSampler().isBindless())
+                    break;
+            } else if ((node->getAsSymbolNode() != nullptr || node->getAsSelectionNode() != nullptr) &&
+                        (op == EOpAssign || op == EOpSequence) && 
+                        node->getType().getSampler().isBindless())
+                // If it is a symbol, verification of the type happens later on.
+                // This allows assignment to a temporary sampler
+                break;
+        }
 
         // otherwise, opaque types can't even be operated on, let alone converted
         return false;
@@ -2011,7 +2041,7 @@ TOperator TIntermediate::mapTypeToConstructorOp(const TType& type) const
         op = EOpConstructStruct;
         break;
     case EbtSampler:
-        if (type.getSampler().isCombined())
+        if (type.getSampler().isCombined() || type.getSampler().isBindless())
             op = EOpConstructTextureSampler;
         break;
     case EbtFloat:
@@ -3278,6 +3308,16 @@ bool TIntermediate::promoteUnary(TIntermUnary& node)
     node.getWritableType().getQualifier().makeTemporary();
 
     return true;
+}
+
+void TIntermUnary::updateFormatQualifier(TLayoutFormat format)
+{
+    getQualifier().layoutFormat = format;
+}
+
+void TIntermAggregate::updateFormatQualifier(TLayoutFormat format)
+{
+    getQualifier().layoutFormat = format;
 }
 
 // Propagate precision qualifiers *up* from children to parent.

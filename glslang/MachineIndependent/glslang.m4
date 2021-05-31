@@ -530,6 +530,18 @@ function_call_header_with_parameters
         $$.function = $1.function;
         $$.intermNode = $2;
     }
+    | function_call_header layout_qualifier assignment_expression {
+        // This case Handles image variable as part of image functions
+        parseContext.bindlessTextureCheck($1.loc, "image variable with layout format qualifier as parameter to a function");
+        if(!$3->getType().isImage() || !$2.qualifier.hasFormat())
+            parseContext.error($1.loc, "only image variable with format layout qualifier expected", "", "");
+        parseContext.bindlessSamplerQualifierCheck($2.loc, $2.qualifier, $3);
+        TParameter param = { 0, new TType };
+        param.type->shallowCopy($3->getType());
+        $1.function->addParameter(param);
+        $$.function = $1.function;
+        $$.intermNode = $3;
+    }
     | function_call_header_with_parameters COMMA assignment_expression {
         TParameter param = { 0, new TType };
         param.type->shallowCopy($3->getType());
@@ -816,6 +828,21 @@ assignment_expression
         $$ = parseContext.addAssign($2.loc, $2.op, $1, $3);
         if ($$ == 0) {
             parseContext.assignError($2.loc, "assign", $1->getCompleteString(), $3->getCompleteString());
+            $$ = $1;
+        }
+    }
+    | unary_expression assignment_operator layout_qualifier assignment_expression {
+        parseContext.bindlessTextureCheck($2.loc, "layout qualifier in assignment expression");
+        parseContext.arrayObjectCheck($2.loc, $1->getType(), "array assignment");
+        parseContext.opaqueCheck($2.loc, $1->getType(), "=");
+        parseContext.storage16BitAssignmentCheck($2.loc, $1->getType(), "=");
+        parseContext.specializationCheck($2.loc, $1->getType(), "=");
+        parseContext.lValueErrorCheck($2.loc, "assign", $1);
+        parseContext.bindlessSamplerQualifierCheck($3.loc, $3.qualifier, $4);
+        parseContext.rValueErrorCheck($2.loc, "assign", $4);
+        $$ = parseContext.intermediate.addAssign($2.op, $1, $4, $2.loc);
+        if ($$ == 0) {
+            parseContext.assignError($2.loc, "assign", $1->getCompleteString(), $4->getCompleteString());
             $$ = $1;
         }
     }
@@ -3063,27 +3090,38 @@ GLSLANG_WEB_EXCLUDE_ON
         $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
         $$.basicType = EbtSampler;
         $$.sampler.setImage(EbtFloat, Esd1D);
+        if (parseContext.extensionTurnedOn(E_GL_NV_bindless_texture))
+            $$.sampler.setBindless(true);
     }
     | F16IMAGE1D {
         parseContext.float16OpaqueCheck($1.loc, "half float image", parseContext.symbolTable.atBuiltInLevel());
         $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
         $$.basicType = EbtSampler;
         $$.sampler.setImage(EbtFloat16, Esd1D);
+        if (parseContext.extensionTurnedOn(E_GL_NV_bindless_texture))
+            $$.sampler.setBindless(true);
+
     }
     | IIMAGE1D {
         $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
         $$.basicType = EbtSampler;
         $$.sampler.setImage(EbtInt, Esd1D);
+        if (parseContext.extensionTurnedOn(E_GL_NV_bindless_texture))
+            $$.sampler.setBindless(true);
     }
     | UIMAGE1D {
         $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
         $$.basicType = EbtSampler;
         $$.sampler.setImage(EbtUint, Esd1D);
+        if (parseContext.extensionTurnedOn(E_GL_NV_bindless_texture))
+            $$.sampler.setBindless(true);
     }
     | IMAGE2D {
         $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
         $$.basicType = EbtSampler;
         $$.sampler.setImage(EbtFloat, Esd2D);
+        if (parseContext.extensionTurnedOn(E_GL_NV_bindless_texture))
+            $$.sampler.setBindless(true);
     }
     | F16IMAGE2D {
         parseContext.float16OpaqueCheck($1.loc, "half float image", parseContext.symbolTable.atBuiltInLevel());
@@ -3095,16 +3133,22 @@ GLSLANG_WEB_EXCLUDE_ON
         $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
         $$.basicType = EbtSampler;
         $$.sampler.setImage(EbtInt, Esd2D);
+        if (parseContext.extensionTurnedOn(E_GL_NV_bindless_texture))
+            $$.sampler.setBindless(true);
     }
     | UIMAGE2D {
         $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
         $$.basicType = EbtSampler;
         $$.sampler.setImage(EbtUint, Esd2D);
+        if (parseContext.extensionTurnedOn(E_GL_NV_bindless_texture))
+            $$.sampler.setBindless(true);
     }
     | IMAGE3D {
         $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
         $$.basicType = EbtSampler;
         $$.sampler.setImage(EbtFloat, Esd3D);
+        if (parseContext.extensionTurnedOn(E_GL_NV_bindless_texture))
+            $$.sampler.setBindless(true);
     }
     | F16IMAGE3D {
         parseContext.float16OpaqueCheck($1.loc, "half float image", parseContext.symbolTable.atBuiltInLevel());
@@ -3116,16 +3160,22 @@ GLSLANG_WEB_EXCLUDE_ON
         $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
         $$.basicType = EbtSampler;
         $$.sampler.setImage(EbtInt, Esd3D);
+        if (parseContext.extensionTurnedOn(E_GL_NV_bindless_texture))
+            $$.sampler.setBindless(true);
     }
     | UIMAGE3D {
         $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
         $$.basicType = EbtSampler;
         $$.sampler.setImage(EbtUint, Esd3D);
+        if (parseContext.extensionTurnedOn(E_GL_NV_bindless_texture))
+            $$.sampler.setBindless(true);
     }
     | IMAGE2DRECT {
         $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
         $$.basicType = EbtSampler;
         $$.sampler.setImage(EbtFloat, EsdRect);
+        if (parseContext.extensionTurnedOn(E_GL_NV_bindless_texture))
+            $$.sampler.setBindless(true);
     }
     | F16IMAGE2DRECT {
         parseContext.float16OpaqueCheck($1.loc, "half float image", parseContext.symbolTable.atBuiltInLevel());
@@ -3137,16 +3187,22 @@ GLSLANG_WEB_EXCLUDE_ON
         $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
         $$.basicType = EbtSampler;
         $$.sampler.setImage(EbtInt, EsdRect);
+        if (parseContext.extensionTurnedOn(E_GL_NV_bindless_texture))
+            $$.sampler.setBindless(true);
     }
     | UIMAGE2DRECT {
         $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
         $$.basicType = EbtSampler;
         $$.sampler.setImage(EbtUint, EsdRect);
+        if (parseContext.extensionTurnedOn(E_GL_NV_bindless_texture))
+            $$.sampler.setBindless(true);
     }
     | IMAGECUBE {
         $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
         $$.basicType = EbtSampler;
         $$.sampler.setImage(EbtFloat, EsdCube);
+        if (parseContext.extensionTurnedOn(E_GL_NV_bindless_texture))
+            $$.sampler.setBindless(true);
     }
     | F16IMAGECUBE {
         parseContext.float16OpaqueCheck($1.loc, "half float image", parseContext.symbolTable.atBuiltInLevel());
@@ -3158,16 +3214,25 @@ GLSLANG_WEB_EXCLUDE_ON
         $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
         $$.basicType = EbtSampler;
         $$.sampler.setImage(EbtInt, EsdCube);
+        if (parseContext.extensionTurnedOn(E_GL_NV_bindless_texture))
+            $$.sampler.setBindless(true);
+
     }
     | UIMAGECUBE {
         $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
         $$.basicType = EbtSampler;
         $$.sampler.setImage(EbtUint, EsdCube);
+        if (parseContext.extensionTurnedOn(E_GL_NV_bindless_texture))
+            $$.sampler.setBindless(true);
+
     }
     | IMAGEBUFFER {
         $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
         $$.basicType = EbtSampler;
         $$.sampler.setImage(EbtFloat, EsdBuffer);
+        if (parseContext.extensionTurnedOn(E_GL_NV_bindless_texture))
+            $$.sampler.setBindless(true);
+
     }
     | F16IMAGEBUFFER {
         parseContext.float16OpaqueCheck($1.loc, "half float image", parseContext.symbolTable.atBuiltInLevel());
@@ -3179,16 +3244,23 @@ GLSLANG_WEB_EXCLUDE_ON
         $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
         $$.basicType = EbtSampler;
         $$.sampler.setImage(EbtInt, EsdBuffer);
+        if (parseContext.extensionTurnedOn(E_GL_NV_bindless_texture))
+            $$.sampler.setBindless(true);
+
     }
     | UIMAGEBUFFER {
         $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
         $$.basicType = EbtSampler;
         $$.sampler.setImage(EbtUint, EsdBuffer);
+        if (parseContext.extensionTurnedOn(E_GL_NV_bindless_texture))
+            $$.sampler.setBindless(true);
     }
     | IMAGE1DARRAY {
         $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
         $$.basicType = EbtSampler;
         $$.sampler.setImage(EbtFloat, Esd1D, true);
+        if (parseContext.extensionTurnedOn(E_GL_NV_bindless_texture))
+            $$.sampler.setBindless(true);
     }
     | F16IMAGE1DARRAY {
         parseContext.float16OpaqueCheck($1.loc, "half float image", parseContext.symbolTable.atBuiltInLevel());
@@ -3200,16 +3272,22 @@ GLSLANG_WEB_EXCLUDE_ON
         $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
         $$.basicType = EbtSampler;
         $$.sampler.setImage(EbtInt, Esd1D, true);
+        if (parseContext.extensionTurnedOn(E_GL_NV_bindless_texture))
+            $$.sampler.setBindless(true);
     }
     | UIMAGE1DARRAY {
         $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
         $$.basicType = EbtSampler;
         $$.sampler.setImage(EbtUint, Esd1D, true);
+        if (parseContext.extensionTurnedOn(E_GL_NV_bindless_texture))
+            $$.sampler.setBindless(true);
     }
     | IMAGE2DARRAY {
         $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
         $$.basicType = EbtSampler;
         $$.sampler.setImage(EbtFloat, Esd2D, true);
+        if (parseContext.extensionTurnedOn(E_GL_NV_bindless_texture))
+            $$.sampler.setBindless(true);
     }
     | F16IMAGE2DARRAY {
         parseContext.float16OpaqueCheck($1.loc, "half float image", parseContext.symbolTable.atBuiltInLevel());
@@ -3221,16 +3299,22 @@ GLSLANG_WEB_EXCLUDE_ON
         $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
         $$.basicType = EbtSampler;
         $$.sampler.setImage(EbtInt, Esd2D, true);
+        if (parseContext.extensionTurnedOn(E_GL_NV_bindless_texture))
+            $$.sampler.setBindless(true);
     }
     | UIMAGE2DARRAY {
         $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
         $$.basicType = EbtSampler;
         $$.sampler.setImage(EbtUint, Esd2D, true);
+        if (parseContext.extensionTurnedOn(E_GL_NV_bindless_texture))
+            $$.sampler.setBindless(true);
     }
     | IMAGECUBEARRAY {
         $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
         $$.basicType = EbtSampler;
         $$.sampler.setImage(EbtFloat, EsdCube, true);
+        if (parseContext.extensionTurnedOn(E_GL_NV_bindless_texture))
+            $$.sampler.setBindless(true);
     }
     | F16IMAGECUBEARRAY {
         parseContext.float16OpaqueCheck($1.loc, "half float image", parseContext.symbolTable.atBuiltInLevel());
@@ -3242,16 +3326,22 @@ GLSLANG_WEB_EXCLUDE_ON
         $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
         $$.basicType = EbtSampler;
         $$.sampler.setImage(EbtInt, EsdCube, true);
+        if (parseContext.extensionTurnedOn(E_GL_NV_bindless_texture))
+            $$.sampler.setBindless(true);
     }
     | UIMAGECUBEARRAY {
         $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
         $$.basicType = EbtSampler;
         $$.sampler.setImage(EbtUint, EsdCube, true);
+        if (parseContext.extensionTurnedOn(E_GL_NV_bindless_texture))
+            $$.sampler.setBindless(true);
     }
     | IMAGE2DMS {
         $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
         $$.basicType = EbtSampler;
         $$.sampler.setImage(EbtFloat, Esd2D, false, false, true);
+        if (parseContext.extensionTurnedOn(E_GL_NV_bindless_texture))
+            $$.sampler.setBindless(true);
     }
     | F16IMAGE2DMS {
         parseContext.float16OpaqueCheck($1.loc, "half float image", parseContext.symbolTable.atBuiltInLevel());
@@ -3263,16 +3353,22 @@ GLSLANG_WEB_EXCLUDE_ON
         $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
         $$.basicType = EbtSampler;
         $$.sampler.setImage(EbtInt, Esd2D, false, false, true);
+        if (parseContext.extensionTurnedOn(E_GL_NV_bindless_texture))
+            $$.sampler.setBindless(true);
     }
     | UIMAGE2DMS {
         $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
         $$.basicType = EbtSampler;
         $$.sampler.setImage(EbtUint, Esd2D, false, false, true);
+        if (parseContext.extensionTurnedOn(E_GL_NV_bindless_texture))
+            $$.sampler.setBindless(true);
     }
     | IMAGE2DMSARRAY {
         $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
         $$.basicType = EbtSampler;
         $$.sampler.setImage(EbtFloat, Esd2D, true, false, true);
+        if (parseContext.extensionTurnedOn(E_GL_NV_bindless_texture))
+            $$.sampler.setBindless(true);
     }
     | F16IMAGE2DMSARRAY {
         parseContext.float16OpaqueCheck($1.loc, "half float image", parseContext.symbolTable.atBuiltInLevel());
@@ -3284,11 +3380,15 @@ GLSLANG_WEB_EXCLUDE_ON
         $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
         $$.basicType = EbtSampler;
         $$.sampler.setImage(EbtInt, Esd2D, true, false, true);
+        if (parseContext.extensionTurnedOn(E_GL_NV_bindless_texture))
+            $$.sampler.setBindless(true);
     }
     | UIMAGE2DMSARRAY {
         $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
         $$.basicType = EbtSampler;
         $$.sampler.setImage(EbtUint, Esd2D, true, false, true);
+        if (parseContext.extensionTurnedOn(E_GL_NV_bindless_texture))
+            $$.sampler.setBindless(true);
     }
     | I64IMAGE1D {
         $$.init($1.loc, parseContext.symbolTable.atGlobalLevel());
@@ -3638,6 +3738,11 @@ struct_declarator
 initializer
     : assignment_expression {
         $$ = $1;
+    }
+    | layout_qualifier assignment_expression {
+        parseContext.bindlessTextureCheck($1.loc, "layout qualifier as initializer");
+        parseContext.bindlessSamplerQualifierCheck($1.loc, $1.qualifier, $2);
+        $$ = $2;
     }
 GLSLANG_WEB_EXCLUDE_ON
     | LEFT_BRACE initializer_list RIGHT_BRACE {

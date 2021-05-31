@@ -293,6 +293,7 @@ INSTANTIATE_TEST_SUITE_P(
     Glsl, CompileToAstTestNV,
     ::testing::ValuesIn(std::vector<std::string>({
         "nvShaderNoperspectiveInterpolation.frag",
+        "glsl.nvbindlessTexture.frag",
     })),
     FileNameAsCustomTestSuffix
 );

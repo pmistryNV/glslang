@@ -1,0 +1,1008 @@
+glsl.nvbindlessTexture.frag
+ERROR: 0:200: 'theLocalSampler as temporary variable' : required extension not requested: GL_NV_bindless_texture
+ERROR: 0:201: 'sampler2D' : sampler-constructor with one argument, requires extension GL_NV_bindless_texture 
+ERROR: 0:201: 'utheSampler as temporary variable' : required extension not requested: GL_NV_bindless_texture
+ERROR: 0:201: '=' :  cannot convert from ' const float' to ' temp sampler2D'
+ERROR: 0:202: 'sampler type conversion to uint64' : required extension not requested: GL_NV_bindless_texture
+ERROR: 5 compilation errors.  No code generated.
+
+
+Shader version: 450
+Requested GL_ARB_gpu_shader_int64
+Requested GL_NV_bindless_texture
+ERROR: node is still EOpNull!
+0:42  Function Definition: funcSampler(s21;s21; ( global 4-component vector of float)
+0:42    Function Parameters: 
+0:42      'paramSampler' ( inout sampler2D)
+0:42      'paramSampler1' ( out sampler2D)
+0:44    Sequence
+0:44      move second child to first child ( temp sampler2D)
+0:44        'paramSampler' ( inout sampler2D)
+0:44        Convert uint64 to Sampler ( temp sampler2D)
+0:44          utextureHandle: direct index for structure (layout( column_major shared) uniform uint64_t)
+0:44            'anon@0' (layout( column_major shared) uniform block{layout( column_major shared) uniform sampler2D UboSampler, layout( column_major shared rgba32f) uniform image2D UboImage, layout( column_major shared) uniform uint64_t utextureHandle})
+0:44            Constant:
+0:44              2 (const uint)
+0:45      Branch: Return with expression
+0:45        texture ( global 4-component vector of float)
+0:45          'paramSampler' ( inout sampler2D)
+0:45          'texCoord' ( smooth in 2-component vector of float)
+0:48  Function Definition: funcImage(I21; ( global void)
+0:48    Function Parameters: 
+0:48      'imgTemp' (layout( rgba32f) inout image2D)
+0:50    Sequence
+0:50      move second child to first child ( temp image2D)
+0:50        'imgTemp' (layout( rgba32f) inout image2D)
+0:50        Convert uint64 to Image (layout( rgba32f) temp image2D)
+0:50          utextureHandle: direct index for structure (layout( column_major shared) uniform uint64_t)
+0:50            'anon@0' (layout( column_major shared) uniform block{layout( column_major shared) uniform sampler2D UboSampler, layout( column_major shared rgba32f) uniform image2D UboImage, layout( column_major shared) uniform uint64_t utextureHandle})
+0:50            Constant:
+0:50              2 (const uint)
+0:54  Function Definition: main( ( global void)
+0:54    Function Parameters: 
+0:?     Sequence
+0:61      Sequence
+0:61        move second child to first child ( temp sampler2D)
+0:61          'utheSampler' ( temp sampler2D)
+0:61          Convert uint64 to Sampler ( temp sampler2D)
+0:61            utextureHandle: direct index for structure (layout( column_major shared) uniform uint64_t)
+0:61              'anon@0' (layout( column_major shared) uniform block{layout( column_major shared) uniform sampler2D UboSampler, layout( column_major shared rgba32f) uniform image2D UboImage, layout( column_major shared) uniform uint64_t utextureHandle})
+0:61              Constant:
+0:61                2 (const uint)
+0:62      Sequence
+0:62        move second child to first child ( temp image2D)
+0:62          'ulocalImage' (layout( rgba32f) temp image2D)
+0:62          Convert uint64 to Image (layout( rgba32f) temp image2D)
+0:62            utextureHandle: direct index for structure (layout( column_major shared) uniform uint64_t)
+0:62              'anon@0' (layout( column_major shared) uniform block{layout( column_major shared) uniform sampler2D UboSampler, layout( column_major shared rgba32f) uniform image2D UboImage, layout( column_major shared) uniform uint64_t utextureHandle})
+0:62              Constant:
+0:62                2 (const uint)
+0:63      Sequence
+0:63        move second child to first child ( temp uint64_t)
+0:63          'lu64utextureHandle' ( temp uint64_t)
+0:63          Convert Sampler to uint64 ( temp uint64_t)
+0:63            'inSampler' ( flat in sampler2D)
+0:64      Sequence
+0:64        move second child to first child ( temp uint64_t)
+0:64          'lu64imgutextureHandle' ( temp uint64_t)
+0:64          Convert Image to uint64 ( temp uint64_t)
+0:64            'inImage' (layout( rgba32f) flat in image2D)
+0:65      Sequence
+0:65        move second child to first child ( temp image2D)
+0:65          'tempi2D' ( writeonly temp image2D)
+0:65          Convert uint64 to Image ( temp image2D)
+0:65            'inTexturehandle' ( flat in uint64_t)
+0:68      Sequence
+0:68        move second child to first child ( temp 4-component vector of float)
+0:68          'res' ( temp 4-component vector of float)
+0:68          texture ( global 4-component vector of float)
+0:68            'theSampler' (layout( location=0) uniform sampler2D)
+0:68            'texCoord' ( smooth in 2-component vector of float)
+0:69      Sequence
+0:69        move second child to first child ( temp 4-component vector of float)
+0:69          'res1' ( temp 4-component vector of float)
+0:69          texture ( global 4-component vector of float)
+0:69            'utheSampler' ( temp sampler2D)
+0:69            'texCoord' ( smooth in 2-component vector of float)
+0:70      Sequence
+0:70        move second child to first child ( temp 4-component vector of float)
+0:70          'res2' ( temp 4-component vector of float)
+0:70          texture ( global 4-component vector of float)
+0:70            Convert uint64 to Sampler ( temp sampler2D)
+0:70              utextureHandle: direct index for structure (layout( column_major shared) uniform uint64_t)
+0:70                'anon@0' (layout( column_major shared) uniform block{layout( column_major shared) uniform sampler2D UboSampler, layout( column_major shared rgba32f) uniform image2D UboImage, layout( column_major shared) uniform uint64_t utextureHandle})
+0:70                Constant:
+0:70                  2 (const uint)
+0:70            'texCoord' ( smooth in 2-component vector of float)
+0:72      Sequence
+0:72        move second child to first child ( temp 4-component vector of float)
+0:72          'res4' ( temp 4-component vector of float)
+0:72          imageLoad ( global 4-component vector of float)
+0:72            'inImage' (layout( rgba32f) flat in image2D)
+0:72            Constant:
+0:72              0 (const int)
+0:72              0 (const int)
+0:73      Sequence
+0:73        move second child to first child ( temp 2-component vector of int)
+0:73          'res5' ( temp 2-component vector of int)
+0:73          imageQuerySize ( global 2-component vector of int)
+0:73            'tempi2D' ( writeonly temp image2D)
+0:77      Sequence
+0:77        move second child to first child ( temp 4-component vector of float)
+0:77          'res6' ( temp 4-component vector of float)
+0:77          Function Call: funcSampler(s21;s21; ( global 4-component vector of float)
+0:77            'theLocalSampler' ( temp sampler2D)
+0:77            'theLocalSampler1' ( temp sampler2D)
+0:78      Function Call: funcImage(I21; ( global void)
+0:78        'localimg' (layout( rgba32f) temp image2D)
+0:88  Function Definition: testImageTypes( ( global void)
+0:88    Function Parameters: 
+0:91    Sequence
+0:91      Sequence
+0:91        move second child to first child ( temp image1D)
+0:91          'i1D' (layout( rgba32f) temp image1D)
+0:91          Convert uint64 to Image (layout( rgba32f) temp image1D)
+0:91            utextureHandle: direct index for structure (layout( column_major shared) uniform uint64_t)
+0:91              'anon@0' (layout( column_major shared) uniform block{layout( column_major shared) uniform sampler2D UboSampler, layout( column_major shared rgba32f) uniform image2D UboImage, layout( column_major shared) uniform uint64_t utextureHandle})
+0:91              Constant:
+0:91                2 (const uint)
+0:92      Sequence
+0:92        move second child to first child ( temp image2D)
+0:92          'i2D' (layout( rgba32f) temp image2D)
+0:92          Convert uint64 to Image (layout( rgba32f) temp image2D)
+0:92            utextureHandle: direct index for structure (layout( column_major shared) uniform uint64_t)
+0:92              'anon@0' (layout( column_major shared) uniform block{layout( column_major shared) uniform sampler2D UboSampler, layout( column_major shared rgba32f) uniform image2D UboImage, layout( column_major shared) uniform uint64_t utextureHandle})
+0:92              Constant:
+0:92                2 (const uint)
+0:93      Sequence
+0:93        move second child to first child ( temp image3D)
+0:93          'i3D' (layout( rgba32f) temp image3D)
+0:93          Convert uint64 to Image (layout( rgba32f) temp image3D)
+0:93            utextureHandle: direct index for structure (layout( column_major shared) uniform uint64_t)
+0:93              'anon@0' (layout( column_major shared) uniform block{layout( column_major shared) uniform sampler2D UboSampler, layout( column_major shared rgba32f) uniform image2D UboImage, layout( column_major shared) uniform uint64_t utextureHandle})
+0:93              Constant:
+0:93                2 (const uint)
+0:94      Sequence
+0:94        move second child to first child ( temp imageCube)
+0:94          'iCube' (layout( rgba32f) temp imageCube)
+0:94          Convert uint64 to Image (layout( rgba32f) temp imageCube)
+0:94            utextureHandle: direct index for structure (layout( column_major shared) uniform uint64_t)
+0:94              'anon@0' (layout( column_major shared) uniform block{layout( column_major shared) uniform sampler2D UboSampler, layout( column_major shared rgba32f) uniform image2D UboImage, layout( column_major shared) uniform uint64_t utextureHandle})
+0:94              Constant:
+0:94                2 (const uint)
+0:96      Sequence
+0:96        move second child to first child ( temp imageCubeArray)
+0:96          'iCubeArray' (layout( rgba32f) temp imageCubeArray)
+0:96          Convert uint64 to Image (layout( rgba32f) temp imageCubeArray)
+0:96            utextureHandle: direct index for structure (layout( column_major shared) uniform uint64_t)
+0:96              'anon@0' (layout( column_major shared) uniform block{layout( column_major shared) uniform sampler2D UboSampler, layout( column_major shared rgba32f) uniform image2D UboImage, layout( column_major shared) uniform uint64_t utextureHandle})
+0:96              Constant:
+0:96                2 (const uint)
+0:97      Sequence
+0:97        move second child to first child ( temp image2DRect)
+0:97          'i2DRect' (layout( rgba32f) temp image2DRect)
+0:97          Convert uint64 to Image (layout( rgba32f) temp image2DRect)
+0:97            utextureHandle: direct index for structure (layout( column_major shared) uniform uint64_t)
+0:97              'anon@0' (layout( column_major shared) uniform block{layout( column_major shared) uniform sampler2D UboSampler, layout( column_major shared rgba32f) uniform image2D UboImage, layout( column_major shared) uniform uint64_t utextureHandle})
+0:97              Constant:
+0:97                2 (const uint)
+0:98      Sequence
+0:98        move second child to first child ( temp image1DArray)
+0:98          'i1DArray' (layout( rgba32f) temp image1DArray)
+0:98          Convert uint64 to Image (layout( rgba32f) temp image1DArray)
+0:98            utextureHandle: direct index for structure (layout( column_major shared) uniform uint64_t)
+0:98              'anon@0' (layout( column_major shared) uniform block{layout( column_major shared) uniform sampler2D UboSampler, layout( column_major shared rgba32f) uniform image2D UboImage, layout( column_major shared) uniform uint64_t utextureHandle})
+0:98              Constant:
+0:98                2 (const uint)
+0:99      Sequence
+0:99        move second child to first child ( temp image2DArray)
+0:99          'i2DArray' (layout( rg16) temp image2DArray)
+0:99          Convert uint64 to Image (layout( rg16) temp image2DArray)
+0:99            utextureHandle: direct index for structure (layout( column_major shared) uniform uint64_t)
+0:99              'anon@0' (layout( column_major shared) uniform block{layout( column_major shared) uniform sampler2D UboSampler, layout( column_major shared rgba32f) uniform image2D UboImage, layout( column_major shared) uniform uint64_t utextureHandle})
+0:99              Constant:
+0:99                2 (const uint)
+0:100      Sequence
+0:100        move second child to first child ( temp imageBuffer)
+0:100          'iBuffer' (layout( rgba32f) temp imageBuffer)
+0:100          Convert uint64 to Image (layout( rgba32f) temp imageBuffer)
+0:100            utextureHandle: direct index for structure (layout( column_major shared) uniform uint64_t)
+0:100              'anon@0' (layout( column_major shared) uniform block{layout( column_major shared) uniform sampler2D UboSampler, layout( column_major shared rgba32f) uniform image2D UboImage, layout( column_major shared) uniform uint64_t utextureHandle})
+0:100              Constant:
+0:100                2 (const uint)
+0:101      Sequence
+0:101        move second child to first child ( temp image2DMS)
+0:101          'i2DMS' (layout( rgba32f) temp image2DMS)
+0:101          Convert uint64 to Image (layout( rgba32f) temp image2DMS)
+0:101            utextureHandle: direct index for structure (layout( column_major shared) uniform uint64_t)
+0:101              'anon@0' (layout( column_major shared) uniform block{layout( column_major shared) uniform sampler2D UboSampler, layout( column_major shared rgba32f) uniform image2D UboImage, layout( column_major shared) uniform uint64_t utextureHandle})
+0:101              Constant:
+0:101                2 (const uint)
+0:102      Sequence
+0:102        move second child to first child ( temp image2DMSArray)
+0:102          'i2DMSArray' (layout( rgba32f) temp image2DMSArray)
+0:102          Convert uint64 to Image (layout( rgba32f) temp image2DMSArray)
+0:102            utextureHandle: direct index for structure (layout( column_major shared) uniform uint64_t)
+0:102              'anon@0' (layout( column_major shared) uniform block{layout( column_major shared) uniform sampler2D UboSampler, layout( column_major shared rgba32f) uniform image2D UboImage, layout( column_major shared) uniform uint64_t utextureHandle})
+0:102              Constant:
+0:102                2 (const uint)
+0:104      Sequence
+0:104        move second child to first child ( temp iimage1D)
+0:104          'ii1D' (layout( r32i) temp iimage1D)
+0:104          Convert uint64 to Image (layout( r32i) temp iimage1D)
+0:104            utextureHandle: direct index for structure (layout( column_major shared) uniform uint64_t)
+0:104              'anon@0' (layout( column_major shared) uniform block{layout( column_major shared) uniform sampler2D UboSampler, layout( column_major shared rgba32f) uniform image2D UboImage, layout( column_major shared) uniform uint64_t utextureHandle})
+0:104              Constant:
+0:104                2 (const uint)
+0:105      Sequence
+0:105        move second child to first child ( temp uimage2D)
+0:105          'ui2D' (layout( r32ui) temp uimage2D)
+0:105          Convert uint64 to Image (layout( r32ui) temp uimage2D)
+0:105            utextureHandle: direct index for structure (layout( column_major shared) uniform uint64_t)
+0:105              'anon@0' (layout( column_major shared) uniform block{layout( column_major shared) uniform sampler2D UboSampler, layout( column_major shared rgba32f) uniform image2D UboImage, layout( column_major shared) uniform uint64_t utextureHandle})
+0:105              Constant:
+0:105                2 (const uint)
+0:106      Sequence
+0:106        move second child to first child ( temp iimage2DMS)
+0:106          'ii2DMS' (layout( r32i) temp iimage2DMS)
+0:106          Convert uint64 to Image (layout( r32i) temp iimage2DMS)
+0:106            utextureHandle: direct index for structure (layout( column_major shared) uniform uint64_t)
+0:106              'anon@0' (layout( column_major shared) uniform block{layout( column_major shared) uniform sampler2D UboSampler, layout( column_major shared rgba32f) uniform image2D UboImage, layout( column_major shared) uniform uint64_t utextureHandle})
+0:106              Constant:
+0:106                2 (const uint)
+0:107      Sequence
+0:107        move second child to first child ( temp uimage2DMSArray)
+0:107          'ui2DMSArray' (layout( r32ui) temp uimage2DMSArray)
+0:107          Convert uint64 to Image (layout( r32ui) temp uimage2DMSArray)
+0:107            utextureHandle: direct index for structure (layout( column_major shared) uniform uint64_t)
+0:107              'anon@0' (layout( column_major shared) uniform block{layout( column_major shared) uniform sampler2D UboSampler, layout( column_major shared rgba32f) uniform image2D UboImage, layout( column_major shared) uniform uint64_t utextureHandle})
+0:107              Constant:
+0:107                2 (const uint)
+0:109      Sequence
+0:109        move second child to first child ( temp 3-component vector of int)
+0:109          'iv' ( temp 3-component vector of int)
+0:109          Constant:
+0:109            0 (const int)
+0:109            0 (const int)
+0:109            0 (const int)
+0:110      add second child into first child ( temp int)
+0:110        direct index ( temp int)
+0:110          'iv' ( temp 3-component vector of int)
+0:110          Constant:
+0:110            0 (const int)
+0:110        imageQuerySize ( global int)
+0:110          'i1D' (layout( rgba32f) temp image1D)
+0:111      add second child into first child ( temp 2-component vector of int)
+0:111        vector swizzle ( temp 2-component vector of int)
+0:111          'iv' ( temp 3-component vector of int)
+0:111          Sequence
+0:111            Constant:
+0:111              0 (const int)
+0:111            Constant:
+0:111              1 (const int)
+0:111        imageQuerySize ( global 2-component vector of int)
+0:111          'i2D' (layout( rgba32f) temp image2D)
+0:112      add second child into first child ( temp 3-component vector of int)
+0:112        vector swizzle ( temp 3-component vector of int)
+0:112          'iv' ( temp 3-component vector of int)
+0:112          Sequence
+0:112            Constant:
+0:112              0 (const int)
+0:112            Constant:
+0:112              1 (const int)
+0:112            Constant:
+0:112              2 (const int)
+0:112        imageQuerySize ( global 3-component vector of int)
+0:112          'i3D' (layout( rgba32f) temp image3D)
+0:113      add second child into first child ( temp 2-component vector of int)
+0:113        vector swizzle ( temp 2-component vector of int)
+0:113          'iv' ( temp 3-component vector of int)
+0:113          Sequence
+0:113            Constant:
+0:113              0 (const int)
+0:113            Constant:
+0:113              1 (const int)
+0:113        imageQuerySize ( global 2-component vector of int)
+0:113          'iCube' (layout( rgba32f) temp imageCube)
+0:114      add second child into first child ( temp 3-component vector of int)
+0:114        vector swizzle ( temp 3-component vector of int)
+0:114          'iv' ( temp 3-component vector of int)
+0:114          Sequence
+0:114            Constant:
+0:114              0 (const int)
+0:114            Constant:
+0:114              1 (const int)
+0:114            Constant:
+0:114              2 (const int)
+0:114        imageQuerySize ( global 3-component vector of int)
+0:114          'iCubeArray' (layout( rgba32f) temp imageCubeArray)
+0:115      add second child into first child ( temp 2-component vector of int)
+0:115        vector swizzle ( temp 2-component vector of int)
+0:115          'iv' ( temp 3-component vector of int)
+0:115          Sequence
+0:115            Constant:
+0:115              0 (const int)
+0:115            Constant:
+0:115              1 (const int)
+0:115        imageQuerySize ( global 2-component vector of int)
+0:115          'i2DRect' (layout( rgba32f) temp image2DRect)
+0:116      add second child into first child ( temp 2-component vector of int)
+0:116        vector swizzle ( temp 2-component vector of int)
+0:116          'iv' ( temp 3-component vector of int)
+0:116          Sequence
+0:116            Constant:
+0:116              0 (const int)
+0:116            Constant:
+0:116              1 (const int)
+0:116        imageQuerySize ( global 2-component vector of int)
+0:116          'i1DArray' (layout( rgba32f) temp image1DArray)
+0:117      add second child into first child ( temp 3-component vector of int)
+0:117        vector swizzle ( temp 3-component vector of int)
+0:117          'iv' ( temp 3-component vector of int)
+0:117          Sequence
+0:117            Constant:
+0:117              0 (const int)
+0:117            Constant:
+0:117              1 (const int)
+0:117            Constant:
+0:117              2 (const int)
+0:117        imageQuerySize ( global 3-component vector of int)
+0:117          'i2DArray' (layout( rg16) temp image2DArray)
+0:118      add second child into first child ( temp int)
+0:118        direct index ( temp int)
+0:118          'iv' ( temp 3-component vector of int)
+0:118          Constant:
+0:118            0 (const int)
+0:118        imageQuerySize ( global int)
+0:118          'iBuffer' (layout( rgba32f) temp imageBuffer)
+0:119      add second child into first child ( temp 2-component vector of int)
+0:119        vector swizzle ( temp 2-component vector of int)
+0:119          'iv' ( temp 3-component vector of int)
+0:119          Sequence
+0:119            Constant:
+0:119              0 (const int)
+0:119            Constant:
+0:119              1 (const int)
+0:119        imageQuerySize ( global 2-component vector of int)
+0:119          'i2DMS' (layout( rgba32f) temp image2DMS)
+0:120      add second child into first child ( temp 3-component vector of int)
+0:120        vector swizzle ( temp 3-component vector of int)
+0:120          'iv' ( temp 3-component vector of int)
+0:120          Sequence
+0:120            Constant:
+0:120              0 (const int)
+0:120            Constant:
+0:120              1 (const int)
+0:120            Constant:
+0:120              2 (const int)
+0:120        imageQuerySize ( global 3-component vector of int)
+0:120          'i2DMSArray' (layout( rgba32f) temp image2DMSArray)
+0:122      Sequence
+0:122        move second child to first child ( temp 3-component vector of int)
+0:122          'iv1' ( temp 3-component vector of int)
+0:122          Constant:
+0:122            0 (const int)
+0:122            0 (const int)
+0:122            0 (const int)
+0:123      add second child into first child ( temp int)
+0:123        direct index ( temp int)
+0:123          'iv1' ( temp 3-component vector of int)
+0:123          Constant:
+0:123            0 (const int)
+0:123        imageQuerySize ( global int)
+0:123          Convert uint64 to Image (layout( rgba32f) temp image1D)
+0:123            utextureHandle: direct index for structure (layout( column_major shared) uniform uint64_t)
+0:123              'anon@0' (layout( column_major shared) uniform block{layout( column_major shared) uniform sampler2D UboSampler, layout( column_major shared rgba32f) uniform image2D UboImage, layout( column_major shared) uniform uint64_t utextureHandle})
+0:123              Constant:
+0:123                2 (const uint)
+0:124      add second child into first child ( temp 2-component vector of int)
+0:124        vector swizzle ( temp 2-component vector of int)
+0:124          'iv1' ( temp 3-component vector of int)
+0:124          Sequence
+0:124            Constant:
+0:124              0 (const int)
+0:124            Constant:
+0:124              1 (const int)
+0:124        imageQuerySize ( global 2-component vector of int)
+0:124          Convert uint64 to Image (layout( rgba32f) temp image2D)
+0:124            utextureHandle: direct index for structure (layout( column_major shared) uniform uint64_t)
+0:124              'anon@0' (layout( column_major shared) uniform block{layout( column_major shared) uniform sampler2D UboSampler, layout( column_major shared rgba32f) uniform image2D UboImage, layout( column_major shared) uniform uint64_t utextureHandle})
+0:124              Constant:
+0:124                2 (const uint)
+0:125      add second child into first child ( temp 3-component vector of int)
+0:125        vector swizzle ( temp 3-component vector of int)
+0:125          'iv1' ( temp 3-component vector of int)
+0:125          Sequence
+0:125            Constant:
+0:125              0 (const int)
+0:125            Constant:
+0:125              1 (const int)
+0:125            Constant:
+0:125              2 (const int)
+0:125        imageQuerySize ( global 3-component vector of int)
+0:125          Convert uint64 to Image (layout( rgba32f) temp image3D)
+0:125            utextureHandle: direct index for structure (layout( column_major shared) uniform uint64_t)
+0:125              'anon@0' (layout( column_major shared) uniform block{layout( column_major shared) uniform sampler2D UboSampler, layout( column_major shared rgba32f) uniform image2D UboImage, layout( column_major shared) uniform uint64_t utextureHandle})
+0:125              Constant:
+0:125                2 (const uint)
+0:126      add second child into first child ( temp 2-component vector of int)
+0:126        vector swizzle ( temp 2-component vector of int)
+0:126          'iv1' ( temp 3-component vector of int)
+0:126          Sequence
+0:126            Constant:
+0:126              0 (const int)
+0:126            Constant:
+0:126              1 (const int)
+0:126        imageQuerySize ( global 2-component vector of int)
+0:126          Convert uint64 to Image (layout( rgba32f) temp imageCube)
+0:126            utextureHandle: direct index for structure (layout( column_major shared) uniform uint64_t)
+0:126              'anon@0' (layout( column_major shared) uniform block{layout( column_major shared) uniform sampler2D UboSampler, layout( column_major shared rgba32f) uniform image2D UboImage, layout( column_major shared) uniform uint64_t utextureHandle})
+0:126              Constant:
+0:126                2 (const uint)
+0:127      add second child into first child ( temp 3-component vector of int)
+0:127        vector swizzle ( temp 3-component vector of int)
+0:127          'iv1' ( temp 3-component vector of int)
+0:127          Sequence
+0:127            Constant:
+0:127              0 (const int)
+0:127            Constant:
+0:127              1 (const int)
+0:127            Constant:
+0:127              2 (const int)
+0:127        imageQuerySize ( global 3-component vector of int)
+0:127          Convert uint64 to Image (layout( rgba32f) temp imageCubeArray)
+0:127            utextureHandle: direct index for structure (layout( column_major shared) uniform uint64_t)
+0:127              'anon@0' (layout( column_major shared) uniform block{layout( column_major shared) uniform sampler2D UboSampler, layout( column_major shared rgba32f) uniform image2D UboImage, layout( column_major shared) uniform uint64_t utextureHandle})
+0:127              Constant:
+0:127                2 (const uint)
+0:128      add second child into first child ( temp 2-component vector of int)
+0:128        vector swizzle ( temp 2-component vector of int)
+0:128          'iv1' ( temp 3-component vector of int)
+0:128          Sequence
+0:128            Constant:
+0:128              0 (const int)
+0:128            Constant:
+0:128              1 (const int)
+0:128        imageQuerySize ( global 2-component vector of int)
+0:128          Convert uint64 to Image (layout( rgba32f) temp image2DRect)
+0:128            utextureHandle: direct index for structure (layout( column_major shared) uniform uint64_t)
+0:128              'anon@0' (layout( column_major shared) uniform block{layout( column_major shared) uniform sampler2D UboSampler, layout( column_major shared rgba32f) uniform image2D UboImage, layout( column_major shared) uniform uint64_t utextureHandle})
+0:128              Constant:
+0:128                2 (const uint)
+0:129      add second child into first child ( temp 2-component vector of int)
+0:129        vector swizzle ( temp 2-component vector of int)
+0:129          'iv1' ( temp 3-component vector of int)
+0:129          Sequence
+0:129            Constant:
+0:129              0 (const int)
+0:129            Constant:
+0:129              1 (const int)
+0:129        imageQuerySize ( global 2-component vector of int)
+0:129          Convert uint64 to Image (layout( rgba32f) temp image1DArray)
+0:129            utextureHandle: direct index for structure (layout( column_major shared) uniform uint64_t)
+0:129              'anon@0' (layout( column_major shared) uniform block{layout( column_major shared) uniform sampler2D UboSampler, layout( column_major shared rgba32f) uniform image2D UboImage, layout( column_major shared) uniform uint64_t utextureHandle})
+0:129              Constant:
+0:129                2 (const uint)
+0:130      add second child into first child ( temp 3-component vector of int)
+0:130        vector swizzle ( temp 3-component vector of int)
+0:130          'iv1' ( temp 3-component vector of int)
+0:130          Sequence
+0:130            Constant:
+0:130              0 (const int)
+0:130            Constant:
+0:130              1 (const int)
+0:130            Constant:
+0:130              2 (const int)
+0:130        imageQuerySize ( global int)
+0:130          Convert uint64 to Image (layout( rgba32f) temp imageBuffer)
+0:130            utextureHandle: direct index for structure (layout( column_major shared) uniform uint64_t)
+0:130              'anon@0' (layout( column_major shared) uniform block{layout( column_major shared) uniform sampler2D UboSampler, layout( column_major shared rgba32f) uniform image2D UboImage, layout( column_major shared) uniform uint64_t utextureHandle})
+0:130              Constant:
+0:130                2 (const uint)
+0:131      add second child into first child ( temp int)
+0:131        direct index ( temp int)
+0:131          'iv1' ( temp 3-component vector of int)
+0:131          Constant:
+0:131            0 (const int)
+0:131        imageQuerySize ( global int)
+0:131          Convert uint64 to Image (layout( rgba32f) temp imageBuffer)
+0:131            utextureHandle: direct index for structure (layout( column_major shared) uniform uint64_t)
+0:131              'anon@0' (layout( column_major shared) uniform block{layout( column_major shared) uniform sampler2D UboSampler, layout( column_major shared rgba32f) uniform image2D UboImage, layout( column_major shared) uniform uint64_t utextureHandle})
+0:131              Constant:
+0:131                2 (const uint)
+0:132      add second child into first child ( temp 2-component vector of int)
+0:132        vector swizzle ( temp 2-component vector of int)
+0:132          'iv1' ( temp 3-component vector of int)
+0:132          Sequence
+0:132            Constant:
+0:132              0 (const int)
+0:132            Constant:
+0:132              1 (const int)
+0:132        imageQuerySize ( global 2-component vector of int)
+0:132          Convert uint64 to Image (layout( rgba32f) temp image2DMS)
+0:132            utextureHandle: direct index for structure (layout( column_major shared) uniform uint64_t)
+0:132              'anon@0' (layout( column_major shared) uniform block{layout( column_major shared) uniform sampler2D UboSampler, layout( column_major shared rgba32f) uniform image2D UboImage, layout( column_major shared) uniform uint64_t utextureHandle})
+0:132              Constant:
+0:132                2 (const uint)
+0:133      add second child into first child ( temp 3-component vector of int)
+0:133        vector swizzle ( temp 3-component vector of int)
+0:133          'iv1' ( temp 3-component vector of int)
+0:133          Sequence
+0:133            Constant:
+0:133              0 (const int)
+0:133            Constant:
+0:133              1 (const int)
+0:133            Constant:
+0:133              2 (const int)
+0:133        imageQuerySize ( global 3-component vector of int)
+0:133          Convert uint64 to Image (layout( rgba32f) temp image2DMSArray)
+0:133            utextureHandle: direct index for structure (layout( column_major shared) uniform uint64_t)
+0:133              'anon@0' (layout( column_major shared) uniform block{layout( column_major shared) uniform sampler2D UboSampler, layout( column_major shared rgba32f) uniform image2D UboImage, layout( column_major shared) uniform uint64_t utextureHandle})
+0:133              Constant:
+0:133                2 (const uint)
+0:135      Sequence
+0:135        move second child to first child ( temp uint)
+0:135          'ui' ( temp uint)
+0:135          Constant:
+0:135            0 (const uint)
+0:136      add second child into first child ( temp int)
+0:136        direct index ( temp int)
+0:136          'iv' ( temp 3-component vector of int)
+0:136          Constant:
+0:136            0 (const int)
+0:136        imageAtomicAdd ( global int)
+0:136          'ii1D' (layout( r32i) temp iimage1D)
+0:136          'ic1D' ( flat in int)
+0:136          Constant:
+0:136            10 (const int)
+0:137      add second child into first child ( temp uint)
+0:137        'ui' ( temp uint)
+0:137        imageAtomicAdd ( global uint)
+0:137          'ui2D' (layout( r32ui) temp uimage2D)
+0:137          'ic2D' ( flat in 2-component vector of int)
+0:137          'value' ( flat in uint)
+0:138      add second child into first child ( temp int)
+0:138        direct index ( temp int)
+0:138          'iv' ( temp 3-component vector of int)
+0:138          Constant:
+0:138            0 (const int)
+0:138        imageAtomicCompSwap ( global int)
+0:138          'ii2DMS' (layout( r32i) temp iimage2DMS)
+0:138          'ic2D' ( flat in 2-component vector of int)
+0:138          Constant:
+0:138            2 (const int)
+0:138          Constant:
+0:138            18 (const int)
+0:138          Constant:
+0:138            17 (const int)
+0:139      add second child into first child ( temp uint)
+0:139        'ui' ( temp uint)
+0:139        imageAtomicCompSwap ( global uint)
+0:139          'ui2DMSArray' (layout( r32ui) temp uimage2DMSArray)
+0:139          'ic3D' ( flat in 3-component vector of int)
+0:139          Constant:
+0:139            3 (const int)
+0:139          Constant:
+0:139            19 (const uint)
+0:139          'value' ( flat in uint)
+0:143  Function Definition: testSamplerTypes( ( global void)
+0:143    Function Parameters: 
+0:145    Sequence
+0:145      Sequence
+0:145        move second child to first child ( temp sampler1D)
+0:145          'samp1D' ( temp sampler1D)
+0:145          Convert uint64 to Sampler ( temp sampler1D)
+0:145            utextureHandle: direct index for structure (layout( column_major shared) uniform uint64_t)
+0:145              'anon@0' (layout( column_major shared) uniform block{layout( column_major shared) uniform sampler2D UboSampler, layout( column_major shared rgba32f) uniform image2D UboImage, layout( column_major shared) uniform uint64_t utextureHandle})
+0:145              Constant:
+0:145                2 (const uint)
+0:146      Sequence
+0:146        move second child to first child ( temp isampler2D)
+0:146          'isamp2D' ( temp isampler2D)
+0:146          Convert uint64 to Sampler ( temp isampler2D)
+0:146            utextureHandle: direct index for structure (layout( column_major shared) uniform uint64_t)
+0:146              'anon@0' (layout( column_major shared) uniform block{layout( column_major shared) uniform sampler2D UboSampler, layout( column_major shared rgba32f) uniform image2D UboImage, layout( column_major shared) uniform uint64_t utextureHandle})
+0:146              Constant:
+0:146                2 (const uint)
+0:147      Sequence
+0:147        move second child to first child ( temp usampler3D)
+0:147          'usamp3D' ( temp usampler3D)
+0:147          Convert uint64 to Sampler ( temp usampler3D)
+0:147            utextureHandle: direct index for structure (layout( column_major shared) uniform uint64_t)
+0:147              'anon@0' (layout( column_major shared) uniform block{layout( column_major shared) uniform sampler2D UboSampler, layout( column_major shared rgba32f) uniform image2D UboImage, layout( column_major shared) uniform uint64_t utextureHandle})
+0:147              Constant:
+0:147                2 (const uint)
+0:148      Sequence
+0:148        move second child to first child ( temp samplerCube)
+0:148          'sampCube' ( temp samplerCube)
+0:148          Convert uint64 to Sampler ( temp samplerCube)
+0:148            utextureHandle: direct index for structure (layout( column_major shared) uniform uint64_t)
+0:148              'anon@0' (layout( column_major shared) uniform block{layout( column_major shared) uniform sampler2D UboSampler, layout( column_major shared rgba32f) uniform image2D UboImage, layout( column_major shared) uniform uint64_t utextureHandle})
+0:148              Constant:
+0:148                2 (const uint)
+0:149      Sequence
+0:149        move second child to first child ( temp isampler1DArray)
+0:149          'isamp1DA' ( temp isampler1DArray)
+0:149          Convert uint64 to Sampler ( temp isampler1DArray)
+0:149            utextureHandle: direct index for structure (layout( column_major shared) uniform uint64_t)
+0:149              'anon@0' (layout( column_major shared) uniform block{layout( column_major shared) uniform sampler2D UboSampler, layout( column_major shared rgba32f) uniform image2D UboImage, layout( column_major shared) uniform uint64_t utextureHandle})
+0:149              Constant:
+0:149                2 (const uint)
+0:150      Sequence
+0:150        move second child to first child ( temp usampler2DArray)
+0:150          'usamp2DA' ( temp usampler2DArray)
+0:150          Convert uint64 to Sampler ( temp usampler2DArray)
+0:150            utextureHandle: direct index for structure (layout( column_major shared) uniform uint64_t)
+0:150              'anon@0' (layout( column_major shared) uniform block{layout( column_major shared) uniform sampler2D UboSampler, layout( column_major shared rgba32f) uniform image2D UboImage, layout( column_major shared) uniform uint64_t utextureHandle})
+0:150              Constant:
+0:150                2 (const uint)
+0:151      Sequence
+0:151        move second child to first child ( temp isamplerCubeArray)
+0:151          'isampCubeA' ( temp isamplerCubeArray)
+0:151          Convert uint64 to Sampler ( temp isamplerCubeArray)
+0:151            utextureHandle: direct index for structure (layout( column_major shared) uniform uint64_t)
+0:151              'anon@0' (layout( column_major shared) uniform block{layout( column_major shared) uniform sampler2D UboSampler, layout( column_major shared rgba32f) uniform image2D UboImage, layout( column_major shared) uniform uint64_t utextureHandle})
+0:151              Constant:
+0:151                2 (const uint)
+0:153      Sequence
+0:153        move second child to first child ( temp sampler1DShadow)
+0:153          'samp1Ds' ( temp sampler1DShadow)
+0:153          Convert uint64 to Sampler ( temp sampler1DShadow)
+0:153            utextureHandle: direct index for structure (layout( column_major shared) uniform uint64_t)
+0:153              'anon@0' (layout( column_major shared) uniform block{layout( column_major shared) uniform sampler2D UboSampler, layout( column_major shared rgba32f) uniform image2D UboImage, layout( column_major shared) uniform uint64_t utextureHandle})
+0:153              Constant:
+0:153                2 (const uint)
+0:154      Sequence
+0:154        move second child to first child ( temp sampler2DShadow)
+0:154          'samp2Ds' ( temp sampler2DShadow)
+0:154          Convert uint64 to Sampler ( temp sampler2DShadow)
+0:154            utextureHandle: direct index for structure (layout( column_major shared) uniform uint64_t)
+0:154              'anon@0' (layout( column_major shared) uniform block{layout( column_major shared) uniform sampler2D UboSampler, layout( column_major shared rgba32f) uniform image2D UboImage, layout( column_major shared) uniform uint64_t utextureHandle})
+0:154              Constant:
+0:154                2 (const uint)
+0:155      Sequence
+0:155        move second child to first child ( temp samplerCubeShadow)
+0:155          'sampCubes' ( temp samplerCubeShadow)
+0:155          Convert uint64 to Sampler ( temp samplerCubeShadow)
+0:155            utextureHandle: direct index for structure (layout( column_major shared) uniform uint64_t)
+0:155              'anon@0' (layout( column_major shared) uniform block{layout( column_major shared) uniform sampler2D UboSampler, layout( column_major shared rgba32f) uniform image2D UboImage, layout( column_major shared) uniform uint64_t utextureHandle})
+0:155              Constant:
+0:155                2 (const uint)
+0:156      Sequence
+0:156        move second child to first child ( temp sampler1DArrayShadow)
+0:156          'samp1DAs' ( temp sampler1DArrayShadow)
+0:156          Convert uint64 to Sampler ( temp sampler1DArrayShadow)
+0:156            utextureHandle: direct index for structure (layout( column_major shared) uniform uint64_t)
+0:156              'anon@0' (layout( column_major shared) uniform block{layout( column_major shared) uniform sampler2D UboSampler, layout( column_major shared rgba32f) uniform image2D UboImage, layout( column_major shared) uniform uint64_t utextureHandle})
+0:156              Constant:
+0:156                2 (const uint)
+0:157      Sequence
+0:157        move second child to first child ( temp sampler2DArrayShadow)
+0:157          'samp2DAs' ( temp sampler2DArrayShadow)
+0:157          Convert uint64 to Sampler ( temp sampler2DArrayShadow)
+0:157            utextureHandle: direct index for structure (layout( column_major shared) uniform uint64_t)
+0:157              'anon@0' (layout( column_major shared) uniform block{layout( column_major shared) uniform sampler2D UboSampler, layout( column_major shared rgba32f) uniform image2D UboImage, layout( column_major shared) uniform uint64_t utextureHandle})
+0:157              Constant:
+0:157                2 (const uint)
+0:158      Sequence
+0:158        move second child to first child ( temp samplerCubeArrayShadow)
+0:158          'sampCubeAs' ( temp samplerCubeArrayShadow)
+0:158          Convert uint64 to Sampler ( temp samplerCubeArrayShadow)
+0:158            utextureHandle: direct index for structure (layout( column_major shared) uniform uint64_t)
+0:158              'anon@0' (layout( column_major shared) uniform block{layout( column_major shared) uniform sampler2D UboSampler, layout( column_major shared rgba32f) uniform image2D UboImage, layout( column_major shared) uniform uint64_t utextureHandle})
+0:158              Constant:
+0:158                2 (const uint)
+0:165      move second child to first child ( temp 2-component vector of float)
+0:165        'lod' ( temp 2-component vector of float)
+0:165        textureQueryLod ( global 2-component vector of float)
+0:165          'samp1D' ( temp sampler1D)
+0:165          'pf' ( temp float)
+0:166      move second child to first child ( temp 2-component vector of float)
+0:166        'lod' ( temp 2-component vector of float)
+0:166        textureQueryLod ( global 2-component vector of float)
+0:166          'isamp2D' ( temp isampler2D)
+0:166          'pf2' ( temp 2-component vector of float)
+0:167      move second child to first child ( temp 2-component vector of float)
+0:167        'lod' ( temp 2-component vector of float)
+0:167        textureQueryLod ( global 2-component vector of float)
+0:167          'usamp3D' ( temp usampler3D)
+0:167          'pf3' ( temp 3-component vector of float)
+0:168      move second child to first child ( temp 2-component vector of float)
+0:168        'lod' ( temp 2-component vector of float)
+0:168        textureQueryLod ( global 2-component vector of float)
+0:168          'sampCube' ( temp samplerCube)
+0:168          'pf3' ( temp 3-component vector of float)
+0:169      move second child to first child ( temp 2-component vector of float)
+0:169        'lod' ( temp 2-component vector of float)
+0:169        textureQueryLod ( global 2-component vector of float)
+0:169          'isamp1DA' ( temp isampler1DArray)
+0:169          'pf' ( temp float)
+0:170      move second child to first child ( temp 2-component vector of float)
+0:170        'lod' ( temp 2-component vector of float)
+0:170        textureQueryLod ( global 2-component vector of float)
+0:170          'usamp2DA' ( temp usampler2DArray)
+0:170          'pf2' ( temp 2-component vector of float)
+0:171      move second child to first child ( temp 2-component vector of float)
+0:171        'lod' ( temp 2-component vector of float)
+0:171        textureQueryLod ( global 2-component vector of float)
+0:171          'isampCubeA' ( temp isamplerCubeArray)
+0:171          'pf3' ( temp 3-component vector of float)
+0:173      move second child to first child ( temp 2-component vector of float)
+0:173        'lod' ( temp 2-component vector of float)
+0:173        textureQueryLod ( global 2-component vector of float)
+0:173          'samp1Ds' ( temp sampler1DShadow)
+0:173          'pf' ( temp float)
+0:174      move second child to first child ( temp 2-component vector of float)
+0:174        'lod' ( temp 2-component vector of float)
+0:174        textureQueryLod ( global 2-component vector of float)
+0:174          'samp2Ds' ( temp sampler2DShadow)
+0:174          'pf2' ( temp 2-component vector of float)
+0:175      move second child to first child ( temp 2-component vector of float)
+0:175        'lod' ( temp 2-component vector of float)
+0:175        textureQueryLod ( global 2-component vector of float)
+0:175          'sampCubes' ( temp samplerCubeShadow)
+0:175          'pf3' ( temp 3-component vector of float)
+0:176      move second child to first child ( temp 2-component vector of float)
+0:176        'lod' ( temp 2-component vector of float)
+0:176        textureQueryLod ( global 2-component vector of float)
+0:176          'samp1DAs' ( temp sampler1DArrayShadow)
+0:176          'pf' ( temp float)
+0:177      move second child to first child ( temp 2-component vector of float)
+0:177        'lod' ( temp 2-component vector of float)
+0:177        textureQueryLod ( global 2-component vector of float)
+0:177          'samp2DAs' ( temp sampler2DArrayShadow)
+0:177          'pf2' ( temp 2-component vector of float)
+0:178      move second child to first child ( temp 2-component vector of float)
+0:178        'lod' ( temp 2-component vector of float)
+0:178        textureQueryLod ( global 2-component vector of float)
+0:178          'sampCubeAs' ( temp samplerCubeArrayShadow)
+0:178          'pf3' ( temp 3-component vector of float)
+0:181      move second child to first child ( temp 2-component vector of float)
+0:181        'lod' ( temp 2-component vector of float)
+0:181        textureQueryLod ( global 2-component vector of float)
+0:181          Convert uint64 to Sampler ( temp sampler1D)
+0:181            utextureHandle: direct index for structure (layout( column_major shared) uniform uint64_t)
+0:181              'anon@0' (layout( column_major shared) uniform block{layout( column_major shared) uniform sampler2D UboSampler, layout( column_major shared rgba32f) uniform image2D UboImage, layout( column_major shared) uniform uint64_t utextureHandle})
+0:181              Constant:
+0:181                2 (const uint)
+0:181          'pf' ( temp float)
+0:182      move second child to first child ( temp 2-component vector of float)
+0:182        'lod' ( temp 2-component vector of float)
+0:182        textureQueryLod ( global 2-component vector of float)
+0:182          Convert uint64 to Sampler ( temp isampler2D)
+0:182            utextureHandle: direct index for structure (layout( column_major shared) uniform uint64_t)
+0:182              'anon@0' (layout( column_major shared) uniform block{layout( column_major shared) uniform sampler2D UboSampler, layout( column_major shared rgba32f) uniform image2D UboImage, layout( column_major shared) uniform uint64_t utextureHandle})
+0:182              Constant:
+0:182                2 (const uint)
+0:182          'pf2' ( temp 2-component vector of float)
+0:183      move second child to first child ( temp 2-component vector of float)
+0:183        'lod' ( temp 2-component vector of float)
+0:183        textureQueryLod ( global 2-component vector of float)
+0:183          Convert uint64 to Sampler ( temp usampler3D)
+0:183            utextureHandle: direct index for structure (layout( column_major shared) uniform uint64_t)
+0:183              'anon@0' (layout( column_major shared) uniform block{layout( column_major shared) uniform sampler2D UboSampler, layout( column_major shared rgba32f) uniform image2D UboImage, layout( column_major shared) uniform uint64_t utextureHandle})
+0:183              Constant:
+0:183                2 (const uint)
+0:183          'pf3' ( temp 3-component vector of float)
+0:184      move second child to first child ( temp 2-component vector of float)
+0:184        'lod' ( temp 2-component vector of float)
+0:184        textureQueryLod ( global 2-component vector of float)
+0:184          Convert uint64 to Sampler ( temp samplerCube)
+0:184            utextureHandle: direct index for structure (layout( column_major shared) uniform uint64_t)
+0:184              'anon@0' (layout( column_major shared) uniform block{layout( column_major shared) uniform sampler2D UboSampler, layout( column_major shared rgba32f) uniform image2D UboImage, layout( column_major shared) uniform uint64_t utextureHandle})
+0:184              Constant:
+0:184                2 (const uint)
+0:184          'pf3' ( temp 3-component vector of float)
+0:185      move second child to first child ( temp 2-component vector of float)
+0:185        'lod' ( temp 2-component vector of float)
+0:185        textureQueryLod ( global 2-component vector of float)
+0:185          Convert uint64 to Sampler ( temp isampler1DArray)
+0:185            utextureHandle: direct index for structure (layout( column_major shared) uniform uint64_t)
+0:185              'anon@0' (layout( column_major shared) uniform block{layout( column_major shared) uniform sampler2D UboSampler, layout( column_major shared rgba32f) uniform image2D UboImage, layout( column_major shared) uniform uint64_t utextureHandle})
+0:185              Constant:
+0:185                2 (const uint)
+0:185          'pf' ( temp float)
+0:186      move second child to first child ( temp 2-component vector of float)
+0:186        'lod' ( temp 2-component vector of float)
+0:186        textureQueryLod ( global 2-component vector of float)
+0:186          Convert uint64 to Sampler ( temp usampler2DArray)
+0:186            utextureHandle: direct index for structure (layout( column_major shared) uniform uint64_t)
+0:186              'anon@0' (layout( column_major shared) uniform block{layout( column_major shared) uniform sampler2D UboSampler, layout( column_major shared rgba32f) uniform image2D UboImage, layout( column_major shared) uniform uint64_t utextureHandle})
+0:186              Constant:
+0:186                2 (const uint)
+0:186          'pf2' ( temp 2-component vector of float)
+0:187      move second child to first child ( temp 2-component vector of float)
+0:187        'lod' ( temp 2-component vector of float)
+0:187        textureQueryLod ( global 2-component vector of float)
+0:187          Convert uint64 to Sampler ( temp isamplerCubeArray)
+0:187            utextureHandle: direct index for structure (layout( column_major shared) uniform uint64_t)
+0:187              'anon@0' (layout( column_major shared) uniform block{layout( column_major shared) uniform sampler2D UboSampler, layout( column_major shared rgba32f) uniform image2D UboImage, layout( column_major shared) uniform uint64_t utextureHandle})
+0:187              Constant:
+0:187                2 (const uint)
+0:187          'pf3' ( temp 3-component vector of float)
+0:189      move second child to first child ( temp 2-component vector of float)
+0:189        'lod' ( temp 2-component vector of float)
+0:189        textureQueryLod ( global 2-component vector of float)
+0:189          Convert uint64 to Sampler ( temp sampler1DShadow)
+0:189            utextureHandle: direct index for structure (layout( column_major shared) uniform uint64_t)
+0:189              'anon@0' (layout( column_major shared) uniform block{layout( column_major shared) uniform sampler2D UboSampler, layout( column_major shared rgba32f) uniform image2D UboImage, layout( column_major shared) uniform uint64_t utextureHandle})
+0:189              Constant:
+0:189                2 (const uint)
+0:189          'pf' ( temp float)
+0:190      move second child to first child ( temp 2-component vector of float)
+0:190        'lod' ( temp 2-component vector of float)
+0:190        textureQueryLod ( global 2-component vector of float)
+0:190          Convert uint64 to Sampler ( temp sampler2DShadow)
+0:190            utextureHandle: direct index for structure (layout( column_major shared) uniform uint64_t)
+0:190              'anon@0' (layout( column_major shared) uniform block{layout( column_major shared) uniform sampler2D UboSampler, layout( column_major shared rgba32f) uniform image2D UboImage, layout( column_major shared) uniform uint64_t utextureHandle})
+0:190              Constant:
+0:190                2 (const uint)
+0:190          'pf2' ( temp 2-component vector of float)
+0:191      move second child to first child ( temp 2-component vector of float)
+0:191        'lod' ( temp 2-component vector of float)
+0:191        textureQueryLod ( global 2-component vector of float)
+0:191          Convert uint64 to Sampler ( temp samplerCubeShadow)
+0:191            utextureHandle: direct index for structure (layout( column_major shared) uniform uint64_t)
+0:191              'anon@0' (layout( column_major shared) uniform block{layout( column_major shared) uniform sampler2D UboSampler, layout( column_major shared rgba32f) uniform image2D UboImage, layout( column_major shared) uniform uint64_t utextureHandle})
+0:191              Constant:
+0:191                2 (const uint)
+0:191          'pf3' ( temp 3-component vector of float)
+0:192      move second child to first child ( temp 2-component vector of float)
+0:192        'lod' ( temp 2-component vector of float)
+0:192        textureQueryLod ( global 2-component vector of float)
+0:192          Convert uint64 to Sampler ( temp sampler1DArrayShadow)
+0:192            utextureHandle: direct index for structure (layout( column_major shared) uniform uint64_t)
+0:192              'anon@0' (layout( column_major shared) uniform block{layout( column_major shared) uniform sampler2D UboSampler, layout( column_major shared rgba32f) uniform image2D UboImage, layout( column_major shared) uniform uint64_t utextureHandle})
+0:192              Constant:
+0:192                2 (const uint)
+0:192          'pf' ( temp float)
+0:193      move second child to first child ( temp 2-component vector of float)
+0:193        'lod' ( temp 2-component vector of float)
+0:193        textureQueryLod ( global 2-component vector of float)
+0:193          Convert uint64 to Sampler ( temp sampler2DArrayShadow)
+0:193            utextureHandle: direct index for structure (layout( column_major shared) uniform uint64_t)
+0:193              'anon@0' (layout( column_major shared) uniform block{layout( column_major shared) uniform sampler2D UboSampler, layout( column_major shared rgba32f) uniform image2D UboImage, layout( column_major shared) uniform uint64_t utextureHandle})
+0:193              Constant:
+0:193                2 (const uint)
+0:193          'pf2' ( temp 2-component vector of float)
+0:194      move second child to first child ( temp 2-component vector of float)
+0:194        'lod' ( temp 2-component vector of float)
+0:194        textureQueryLod ( global 2-component vector of float)
+0:194          Convert uint64 to Sampler ( temp samplerCubeArrayShadow)
+0:194            utextureHandle: direct index for structure (layout( column_major shared) uniform uint64_t)
+0:194              'anon@0' (layout( column_major shared) uniform block{layout( column_major shared) uniform sampler2D UboSampler, layout( column_major shared rgba32f) uniform image2D UboImage, layout( column_major shared) uniform uint64_t utextureHandle})
+0:194              Constant:
+0:194                2 (const uint)
+0:194          'pf3' ( temp 3-component vector of float)
+0:198  Function Definition: errorcases( ( global void)
+0:198    Function Parameters: 
+0:?     Sequence
+0:202      Sequence
+0:202        move second child to first child ( temp uint64_t)
+0:202          'lu64utextureHandle' ( temp uint64_t)
+0:202          Convert Sampler to uint64 ( temp uint64_t)
+0:202            'inSampler' ( flat in sampler2D)
+0:?   Linker Objects
+0:?     'inSampler' ( flat in sampler2D)
+0:?     'inImage' (layout( rgba32f) flat in image2D)
+0:?     'inTexturehandle' ( flat in uint64_t)
+0:?     'texCoord' ( smooth in 2-component vector of float)
+0:?     'theSampler' (layout( location=0) uniform sampler2D)
+0:?     'theImage' (layout( location=1 rgba32f) uniform image2D)
+0:?     'test' ( global structure{ global sampler2D theStructSampler, layout( rgba32f) temp image2D theStructImage})
+0:?     'anon@0' (layout( column_major shared) uniform block{layout( column_major shared) uniform sampler2D UboSampler, layout( column_major shared rgba32f) uniform image2D UboImage, layout( column_major shared) uniform uint64_t utextureHandle})
+0:?     'anon@1' (layout( column_major shared) buffer block{layout( column_major shared) buffer sampler2D ssboSampler, layout( column_major shared rgba32f) buffer image2D ssboImage})
+0:?     'ic1D' ( flat in int)
+0:?     'ic2D' ( flat in 2-component vector of int)
+0:?     'ic3D' ( flat in 3-component vector of int)
+0:?     'ic4D' ( flat in 4-component vector of int)
+0:?     'value' ( flat in uint)
+
+
+Linked fragment stage:
+
+
+Shader version: 450
+Requested GL_ARB_gpu_shader_int64
+Requested GL_NV_bindless_texture
+ERROR: node is still EOpNull!
+0:42  Function Definition: funcSampler(s21;s21; ( global 4-component vector of float)
+0:42    Function Parameters: 
+0:42      'paramSampler' ( inout sampler2D)
+0:42      'paramSampler1' ( out sampler2D)
+0:44    Sequence
+0:44      move second child to first child ( temp sampler2D)
+0:44        'paramSampler' ( inout sampler2D)
+0:44        Convert uint64 to Sampler ( temp sampler2D)
+0:44          utextureHandle: direct index for structure (layout( column_major shared) uniform uint64_t)
+0:44            'anon@0' (layout( column_major shared) uniform block{layout( column_major shared) uniform sampler2D UboSampler, layout( column_major shared rgba32f) uniform image2D UboImage, layout( column_major shared) uniform uint64_t utextureHandle})
+0:44            Constant:
+0:44              2 (const uint)
+0:45      Branch: Return with expression
+0:45        texture ( global 4-component vector of float)
+0:45          'paramSampler' ( inout sampler2D)
+0:45          'texCoord' ( smooth in 2-component vector of float)
+0:48  Function Definition: funcImage(I21; ( global void)
+0:48    Function Parameters: 
+0:48      'imgTemp' (layout( rgba32f) inout image2D)
+0:50    Sequence
+0:50      move second child to first child ( temp image2D)
+0:50        'imgTemp' (layout( rgba32f) inout image2D)
+0:50        Convert uint64 to Image (layout( rgba32f) temp image2D)
+0:50          utextureHandle: direct index for structure (layout( column_major shared) uniform uint64_t)
+0:50            'anon@0' (layout( column_major shared) uniform block{layout( column_major shared) uniform sampler2D UboSampler, layout( column_major shared rgba32f) uniform image2D UboImage, layout( column_major shared) uniform uint64_t utextureHandle})
+0:50            Constant:
+0:50              2 (const uint)
+0:54  Function Definition: main( ( global void)
+0:54    Function Parameters: 
+0:?     Sequence
+0:61      Sequence
+0:61        move second child to first child ( temp sampler2D)
+0:61          'utheSampler' ( temp sampler2D)
+0:61          Convert uint64 to Sampler ( temp sampler2D)
+0:61            utextureHandle: direct index for structure (layout( column_major shared) uniform uint64_t)
+0:61              'anon@0' (layout( column_major shared) uniform block{layout( column_major shared) uniform sampler2D UboSampler, layout( column_major shared rgba32f) uniform image2D UboImage, layout( column_major shared) uniform uint64_t utextureHandle})
+0:61              Constant:
+0:61                2 (const uint)
+0:62      Sequence
+0:62        move second child to first child ( temp image2D)
+0:62          'ulocalImage' (layout( rgba32f) temp image2D)
+0:62          Convert uint64 to Image (layout( rgba32f) temp image2D)
+0:62            utextureHandle: direct index for structure (layout( column_major shared) uniform uint64_t)
+0:62              'anon@0' (layout( column_major shared) uniform block{layout( column_major shared) uniform sampler2D UboSampler, layout( column_major shared rgba32f) uniform image2D UboImage, layout( column_major shared) uniform uint64_t utextureHandle})
+0:62              Constant:
+0:62                2 (const uint)
+0:63      Sequence
+0:63        move second child to first child ( temp uint64_t)
+0:63          'lu64utextureHandle' ( temp uint64_t)
+0:63          Convert Sampler to uint64 ( temp uint64_t)
+0:63            'inSampler' ( flat in sampler2D)
+0:64      Sequence
+0:64        move second child to first child ( temp uint64_t)
+0:64          'lu64imgutextureHandle' ( temp uint64_t)
+0:64          Convert Image to uint64 ( temp uint64_t)
+0:64            'inImage' (layout( rgba32f) flat in image2D)
+0:65      Sequence
+0:65        move second child to first child ( temp image2D)
+0:65          'tempi2D' ( writeonly temp image2D)
+0:65          Convert uint64 to Image ( temp image2D)
+0:65            'inTexturehandle' ( flat in uint64_t)
+0:68      Sequence
+0:68        move second child to first child ( temp 4-component vector of float)
+0:68          'res' ( temp 4-component vector of float)
+0:68          texture ( global 4-component vector of float)
+0:68            'theSampler' (layout( location=0) uniform sampler2D)
+0:68            'texCoord' ( smooth in 2-component vector of float)
+0:69      Sequence
+0:69        move second child to first child ( temp 4-component vector of float)
+0:69          'res1' ( temp 4-component vector of float)
+0:69          texture ( global 4-component vector of float)
+0:69            'utheSampler' ( temp sampler2D)
+0:69            'texCoord' ( smooth in 2-component vector of float)
+0:70      Sequence
+0:70        move second child to first child ( temp 4-component vector of float)
+0:70          'res2' ( temp 4-component vector of float)
+0:70          texture ( global 4-component vector of float)
+0:70            Convert uint64 to Sampler ( temp sampler2D)
+0:70              utextureHandle: direct index for structure (layout( column_major shared) uniform uint64_t)
+0:70                'anon@0' (layout( column_major shared) uniform block{layout( column_major shared) uniform sampler2D UboSampler, layout( column_major shared rgba32f) uniform image2D UboImage, layout( column_major shared) uniform uint64_t utextureHandle})
+0:70                Constant:
+0:70                  2 (const uint)
+0:70            'texCoord' ( smooth in 2-component vector of float)
+0:72      Sequence
+0:72        move second child to first child ( temp 4-component vector of float)
+0:72          'res4' ( temp 4-component vector of float)
+0:72          imageLoad ( global 4-component vector of float)
+0:72            'inImage' (layout( rgba32f) flat in image2D)
+0:72            Constant:
+0:72              0 (const int)
+0:72              0 (const int)
+0:73      Sequence
+0:73        move second child to first child ( temp 2-component vector of int)
+0:73          'res5' ( temp 2-component vector of int)
+0:73          imageQuerySize ( global 2-component vector of int)
+0:73            'tempi2D' ( writeonly temp image2D)
+0:77      Sequence
+0:77        move second child to first child ( temp 4-component vector of float)
+0:77          'res6' ( temp 4-component vector of float)
+0:77          Function Call: funcSampler(s21;s21; ( global 4-component vector of float)
+0:77            'theLocalSampler' ( temp sampler2D)
+0:77            'theLocalSampler1' ( temp sampler2D)
+0:78      Function Call: funcImage(I21; ( global void)
+0:78        'localimg' (layout( rgba32f) temp image2D)
+0:?   Linker Objects
+0:?     'inSampler' ( flat in sampler2D)
+0:?     'inImage' (layout( rgba32f) flat in image2D)
+0:?     'inTexturehandle' ( flat in uint64_t)
+0:?     'texCoord' ( smooth in 2-component vector of float)
+0:?     'theSampler' (layout( location=0) uniform sampler2D)
+0:?     'theImage' (layout( location=1 rgba32f) uniform image2D)
+0:?     'test' ( global structure{ global sampler2D theStructSampler, layout( rgba32f) temp image2D theStructImage})
+0:?     'anon@0' (layout( column_major shared) uniform block{layout( column_major shared) uniform sampler2D UboSampler, layout( column_major shared rgba32f) uniform image2D UboImage, layout( column_major shared) uniform uint64_t utextureHandle})
+0:?     'anon@1' (layout( column_major shared) buffer block{layout( column_major shared) buffer sampler2D ssboSampler, layout( column_major shared rgba32f) buffer image2D ssboImage})
+0:?     'ic1D' ( flat in int)
+0:?     'ic2D' ( flat in 2-component vector of int)
+0:?     'ic3D' ( flat in 3-component vector of int)
+0:?     'ic4D' ( flat in 4-component vector of int)
+0:?     'value' ( flat in uint)
+

@@ -43,8 +43,9 @@ ERROR: 0:63: 'invariant' : can only apply to an output, or to an input in a non-
 ERROR: 0:64: 'invariant' : can only apply to an output, or to an input in a non-vertex stage
  
 ERROR: 0:66: 'sampler2D' : sampler/image types can only be used in uniform variables or function parameters: glob2D
-ERROR: 0:69: 'sampler2D' : sampler/image types can only be used in uniform variables or function parameters: v2D
-ERROR: 0:71: 'sampler2D' : sampler/image types can only be used in uniform variables or function parameters: vary2D
+ERROR: 0:69: 'v2D as temporary variable' : required extension not requested: GL_NV_bindless_texture
+ERROR: 0:71: 'vary2D as input variable' : required extension not requested: GL_NV_bindless_texture
+ERROR: 0:71: 'sampler2D' : in sampler/image types must be defined as flat: vary2D
 ERROR: 0:75: 'in for stage inputs' : not supported for this version or the enabled extensions 
 ERROR: 0:77: 'invariant' : can only apply to an output, or to an input in a non-vertex stage
  
@@ -90,7 +91,7 @@ ERROR: 0:235: '#define' : names containing consecutive underscores are reserved,
 ERROR: 0:236: 'a__b' : identifiers containing consecutive underscores ("__") are reserved, and an error if version < 300 
 ERROR: 0:3000: '#error' : line of this error should be 3000  
 ERROR: 0:3002: '' :  syntax error, unexpected IDENTIFIER, expecting LEFT_BRACE or COMMA or SEMICOLON
-ERROR: 82 compilation errors.  No code generated.
+ERROR: 83 compilation errors.  No code generated.
 
 
 Shader version: 100

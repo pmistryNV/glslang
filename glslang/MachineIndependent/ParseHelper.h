@@ -377,7 +377,7 @@ public:
     void integerCheck(const TIntermTyped* node, const char* token);
     void globalCheck(const TSourceLoc&, const char* token);
     bool constructorError(const TSourceLoc&, TIntermNode*, TFunction&, TOperator, TType&);
-    bool constructorTextureSamplerError(const TSourceLoc&, const TFunction&);
+    bool constructorTextureSamplerError(const TSourceLoc&, const TFunction&, TType&);
     void arraySizeCheck(const TSourceLoc&, TIntermTyped* expr, TArraySize&, const char *sizeType);
     bool arrayQualifierError(const TSourceLoc&, const TQualifier&);
     bool arrayError(const TSourceLoc&, const TType&);
@@ -393,6 +393,7 @@ public:
     void accStructCheck(const TSourceLoc & loc, const TType & type, const TString & identifier);
     void transparentOpaqueCheck(const TSourceLoc&, const TType&, const TString& identifier);
     void memberQualifierCheck(glslang::TPublicType&);
+    void bindlessSamplerQualifierCheck(const TSourceLoc&, TQualifier& qualifier, TIntermTyped* node);
     void globalQualifierFixCheck(const TSourceLoc&, TQualifier&, bool isMemberCheck = false);
     void globalQualifierTypeCheck(const TSourceLoc&, const TQualifier&, const TPublicType&);
     bool structQualifierErrorCheck(const TSourceLoc&, const TPublicType& pType);
@@ -427,7 +428,7 @@ public:
     void mergeObjectLayoutQualifiers(TQualifier& dest, const TQualifier& src, bool inheritOnly);
     void layoutObjectCheck(const TSourceLoc&, const TSymbol&);
     void layoutMemberLocationArrayCheck(const TSourceLoc&, bool memberWithLocation, TArraySizes* arraySizes);
-    void layoutTypeCheck(const TSourceLoc&, const TType&);
+    void layoutTypeCheck(const TSourceLoc&, const TType&, bool blockMember = false);
     void layoutQualifierCheck(const TSourceLoc&, const TQualifier&);
     void checkNoShaderLayouts(const TSourceLoc&, const TShaderQualifiers&);
     void fixOffset(const TSourceLoc&, TSymbol&);

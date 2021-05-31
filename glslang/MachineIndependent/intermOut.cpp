@@ -441,6 +441,13 @@ bool TOutputTraverser::visitUnary(TVisit /* visit */, TIntermUnary* node)
     case EOpConvUint64ToAccStruct: out.debug << "Convert uint64_t to acceleration structure"; break;
     case EOpConvUvec2ToAccStruct:  out.debug << "Convert uvec2 to acceleration strucuture "; break;
 
+    case EOpConvSamplerToUint64: out.debug << "Convert Sampler to uint64"; break;
+    case EOpConvImageToUint64:   out.debug << "Convert Image to uint64"; break;
+    case EOpConvPureSamplerToUint64: out.debug << "Convert Pure Sampler to uint64"; break;
+    case EOpConvUint64ToImage:   out.debug << "Convert uint64 to Image"; break;
+    case EOpConvUint64ToSampler: out.debug << "Convert uint64 to Sampler"; break;
+    case EOpConvUint64ToPureSampler: out.debug << "Convert uint64 to Pure Sampler"; break;
+
     case EOpRadians:        out.debug << "radians";              break;
     case EOpDegrees:        out.debug << "degrees";              break;
     case EOpSin:            out.debug << "sine";                 break;
@@ -837,6 +844,7 @@ bool TOutputTraverser::visitAggregate(TVisit /* visit */, TIntermAggregate* node
     case EOpConstructReference:  out.debug << "Construct reference";  break;
     case EOpConstructCooperativeMatrix:  out.debug << "Construct cooperative matrix";  break;
     case EOpConstructAccStruct: out.debug << "Construct acceleration structure"; break;
+    case EOpConstructSampler: out.debug << "Construct sampler"; break;
 
     case EOpLessThan:         out.debug << "Compare Less Than";             break;
     case EOpGreaterThan:      out.debug << "Compare Greater Than";          break;

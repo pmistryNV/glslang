@@ -134,6 +134,8 @@ public:
         memoryModel = mem;
     }
 
+    void setSamplerImageAddressMode(unsigned addressWidth) { samplerImageAddressMode = addressWidth; }
+
     void addCapability(spv::Capability cap) { capabilities.insert(cap); }
 
     // To get a new <id> for anything needing a new one.
@@ -211,6 +213,8 @@ public:
     bool isCooperativeMatrix(Id resultId)const { return isCooperativeMatrixType(getTypeId(resultId)); }
     bool isAggregate(Id resultId)    const { return isAggregateType(getTypeId(resultId)); }
     bool isSampledImage(Id resultId) const { return isSampledImageType(getTypeId(resultId)); }
+    bool isImage(Id resultId) const { return isImageType(getTypeId(resultId)); }
+    bool isSampler(Id resultId) const { return isSamplerType(getTypeId(resultId)); }
 
     bool isBoolType(Id typeId)
         { return groupedTypes[OpTypeBool].size() > 0 && typeId == groupedTypes[OpTypeBool].back()->getResultId(); }
@@ -820,6 +824,7 @@ public:
     Function* entryPointFunction;
     bool generatingOpCodeForSpecConst;
     AccessChain accessChain;
+    unsigned samplerImageAddressMode;
 
     // special blocks of instructions for output
     std::vector<std::unique_ptr<Instruction> > strings;

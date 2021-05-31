@@ -81,4 +81,6 @@ const char* const E_SPV_NV_cooperative_matrix = "SPV_NV_cooperative_matrix";
 //SPV_NV_shader_sm_builtins
 const char* const E_SPV_NV_shader_sm_builtins = "SPV_NV_shader_sm_builtins";
 
+//SPV_NV_bindless_texture
+const char* const E_SPV_NV_bindless_texture = "SPV_NV_bindless_texture";
 #endif  // #ifndef GLSLextNV_H
