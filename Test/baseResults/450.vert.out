@@ -1,6 +1,6 @@
 450.vert
 ERROR: 0:12: 'out' : cannot be bool 
-ERROR: 0:13: 'sampler2D' : sampler/image types can only be used in uniform variables or function parameters: outo
+ERROR: 0:13: 'outo as out variable' : required extension not requested: GL_NV_bindless_texture
 ERROR: 0:30: '::' : not supported 
 ERROR: 0:31: 'atomicCounterAdd' : no matching overloaded function found 
 ERROR: 0:32: 'atomicCounterSubtract' : no matching overloaded function found 

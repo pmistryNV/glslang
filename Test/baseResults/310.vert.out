@@ -9,14 +9,14 @@ ERROR: 0:67: 'textureSamples' : no matching overloaded function found
 ERROR: 0:69: 'assign' :  l-value required "ini" (can't modify shader input)
 ERROR: 0:69: 'out' : Non-L-value cannot be passed for 'out' or 'inout' parameters. 
 ERROR: 0:72: 'out' : cannot be bool 
-ERROR: 0:73: 'sampler2D' : sampler/image types can only be used in uniform variables or function parameters: outo
+ERROR: 0:73: 'outo as out variable' : required extension not requested: GL_NV_bindless_texture
 ERROR: 0:75: 'vertex-shader array-of-array output' : not supported with this profile: es
 ERROR: 0:78: 'vertex-shader array-of-struct output' : not supported with this profile: es
 ERROR: 0:79: 'vertex-shader array-of-struct output' : not supported with this profile: es
 ERROR: 0:81: 'vertex-shader struct output containing an array' : not supported with this profile: es
 ERROR: 0:83: 'vertex-shader struct output containing structure' : not supported with this profile: es
 ERROR: 0:85: 'std430 requires the buffer storage qualifier' : required extension not requested: GL_EXT_scalar_block_layout
-ERROR: 0:97: 's' : member of block cannot be or contain a sampler, image, or atomic_uint type 
+ERROR: 0:97: 'sampler/image in an interface block' : required extension not requested: GL_NV_bindless_texture
 ERROR: 0:105: 'location' : overlapping use of location 12
 ERROR: 0:107: 'input block' : not supported in this stage: vertex
 ERROR: 0:109: 'gl_PerVertex' : block redeclaration has extra members 

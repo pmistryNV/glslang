@@ -81,6 +81,7 @@ struct TSampler {   // misnomer now; includes images, textures without sampler, 
     bool      image : 1;  // image, combined should be false
     bool   combined : 1;  // true means texture is combined with a sampler, false means texture with no sampler
     bool    sampler : 1;  // true means a pure sampler, other fields should be clear()
+    bool   bindless : 1;  // true means a sampler can be converted to or from an EbtUint64 type object
 
 #ifdef GLSLANG_WEB
     bool is1D()          const { return false; }
@@ -94,6 +95,7 @@ struct TSampler {   // misnomer now; includes images, textures without sampler, 
     bool isExternal()    const { return false; }
     void setExternal(bool e) { }
     bool isYuv()         const { return false; }
+    bool isBindless()    const { return false; }
 #else
     unsigned int vectorSize : 3;  // vector return type size.
     // Some languages support structures as sample results.  Storing the whole structure in the
@@ -126,6 +128,7 @@ struct TSampler {   // misnomer now; includes images, textures without sampler, 
     bool isExternal()    const { return external; }
     void setExternal(bool e) { external = e; }
     bool isYuv()         const { return yuv; }
+    bool isBindless()    const { return bindless; }
 #endif
     bool isTexture()     const { return !sampler && !image; }
     bool isPureSampler() const { return sampler; }
@@ -135,6 +138,7 @@ struct TSampler {   // misnomer now; includes images, textures without sampler, 
     TBasicType getBasicType()  const { return type; }
     bool isShadow()      const { return shadow; }
     bool isArrayed()     const { return arrayed; }
+    void setBindless(bool b) { bindless = b; }
 
     void clear()
     {
@@ -146,6 +150,7 @@ struct TSampler {   // misnomer now; includes images, textures without sampler, 
         image = false;
         combined = false;
         sampler = false;
+        bindless = false;
 #ifndef GLSLANG_WEB
         external = false;
         yuv = false;
@@ -895,6 +900,16 @@ public:
     {
         return hasNonXfbLayout() ||
                hasXfb();
+    }
+    bool hasOnlyFormat() const
+    {
+        return hasFormat() && 
+               !hasXfb() && !hasUniformLayout() &&
+               !hasAnyLocation() &&
+               !hasStream() &&
+               !isShaderRecord() &&
+               !isPushConstant() &&
+               !hasBufferReference();
     }
 
     TLayoutMatrix  layoutMatrix  : 3;
@@ -1831,6 +1846,11 @@ public:
     virtual bool containsOpaque() const
     {
         return contains([](const TType* t) { return t->isOpaque(); } );
+    }
+
+    virtual bool containsSampler() const
+    {
+        return contains([](const TType* t) { return t->basicType == EbtSampler; } );
     }
 
     // Recursively checks if the type contains a built-in variable

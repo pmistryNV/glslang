@@ -286,6 +286,16 @@ enum TOperator {
     // uvec2 -> accelerationStructureEXT
     EOpConvUvec2ToAccStruct,
 
+    // uint64 -> sampler/image 
+    EOpConvUint64ToImage,
+    EOpConvUint64ToSampler,
+    EOpConvUint64ToPureSampler,
+
+    // sampler/image -> uint64
+    EOpConvSamplerToUint64,
+    EOpConvImageToUint64,
+    EOpConvPureSamplerToUint64,
+
     //
     // binary operations
     //
@@ -762,6 +772,7 @@ enum TOperator {
     EOpConstructReference,
     EOpConstructCooperativeMatrix,
     EOpConstructAccStruct,
+    EOpConstructSampler,
     EOpConstructGuardEnd,
 
     //
@@ -1616,6 +1627,7 @@ public:
     virtual       TIntermUnary* getAsUnaryNode()       { return this; }
     virtual const TIntermUnary* getAsUnaryNode() const { return this; }
     virtual void updatePrecision();
+    virtual void updateFormatQualifier(TLayoutFormat format);
 protected:
     TIntermTyped* operand;
 };
@@ -1648,6 +1660,7 @@ public:
     bool getDebug() const { return debug; }
     void setPragmaTable(const TPragmaTable& pTable);
     const TPragmaTable& getPragmaTable() const { return *pragmaTable; }
+    void updateFormatQualifier(TLayoutFormat format);
 protected:
     TIntermAggregate(const TIntermAggregate&); // disallow copy constructor
     TIntermAggregate& operator=(const TIntermAggregate&); // disallow assignment operator
